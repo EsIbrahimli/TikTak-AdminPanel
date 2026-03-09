@@ -1,0 +1,23 @@
+.mainContainer {
+    display: flex;
+    width: 80%;
+    margin: auto;
+    justify-content: space-around;
+    margin-top: 80px;
+}
+
+.main {
+    width: 70%;
+    height: 600px;
+    background-color: #ffff;
+    border-radius: 10px;
+    padding: 30px 30px 30px 30px;
+    font-size: 28px;
+    font-weight: 600;
+    color: #2B3043;
+}
+
+.headerContainer {
+    width:100%;
+    background-color: #ffff;
+}
