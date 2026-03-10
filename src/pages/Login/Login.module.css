@@ -1,0 +1,21 @@
+
+
+.login{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.title{
+    font-size: 36px;
+    font-weight: 700;
+    color: #2B3043;
+    padding: 30px;
+    align-items: flex-start !important;
+}
+
+
+.image{
+    height: 500px;
+    width: 500px;
+}
