@@ -1,0 +1,49 @@
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    background-color: #ffffff;
+}
+
+.spinnerWrapper {
+    position: relative;
+    width: 50px;
+    height: 50px;
+}
+
+.outerRing {
+    position: absolute;
+    inset: 0;
+    border: 4px solid #e5e7eb;
+    border-radius: 50%;
+}
+
+.spinnerRing1 {
+    position: absolute;
+    inset: 0;
+    border: 4px solid transparent;
+    border-top-color:  #92D871;
+    border-right-color: #b9e7a4;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.spinnerRing2 {
+    position: absolute;
+    inset: 4px;
+    border: 3px solid transparent;
+    border-bottom-color: #abe192;;
+    border-radius: 50%;
+    animation: spin 1.5s linear infinite reverse;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
