@@ -1,32 +1,51 @@
 import styles from './Login.module.css'
 import loginSvg from '../../assets/images/login.svg'
 import Button from '../../common/components/Button/Button'
-import React from 'react'
+import React, { useState } from 'react'
+
 
 
 const Login = () => {
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+
+
   const handleLogin = () => {
     console.log('Login butonuna tıklandı');
   };
 
   return (
     <div className={styles.login}>
+      <h1 className={styles.title}>TIK TAK ADMIN</h1>
       <div className={styles.container}>
-        <h1 className={styles.title}>TIK TAK ADMIN</h1>
-        <img className={styles.image} src={loginSvg}alt="" />
+        <img className={styles.image} src={loginSvg} alt="" />
       </div>
-       <div className={styles.form}>
-          <h2 className={styles.subtitle}>Admin Panel</h2>
-          <div>
-            <label htmlFor="">Telefon</label>
-            <input className={styles.input} type="text" placeholder='Telefon' />
-          </div>
-          <div>
-            <label htmlFor="">Parol</label>
-            <input className={styles.input} type="password" placeholder='Password' />
-          </div>
-          <Button size="medium" onClick={handleLogin}>Daxil ol</Button>
-       </div>
+      <div className={styles.divider}></div>
+      <div className={styles.form}>
+        <h2 className={styles.subtitle}>Admin Panel</h2>
+        <div className={styles.inputContainer}>
+          <label>Telefon</label>
+          <input
+            className={styles.input}
+            type="text"
+            placeholder="Telefon"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+          />
+
+        </div>
+        <div className={styles.inputContainer}>
+          <label >Parol</label>
+          <input
+            className={styles.input}
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        <Button size="medium" onClick={handleLogin}>Daxil ol</Button>
+      </div>
     </div>
   )
 }
