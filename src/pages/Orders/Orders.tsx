@@ -2,6 +2,10 @@
 import React, { useState } from "react";
 import Layout from "../../common/components/Layout/Layout";
 import styles from "./Orders.module.css";
+import { BsCart3 } from "react-icons/bs";
+import { BsClock } from "react-icons/bs";
+import { BsCurrencyDollar } from "react-icons/bs";
+import { AiFillCloseCircle } from "react-icons/ai";
 
 
  
@@ -17,31 +21,37 @@ const Orders = () => {
   <div className={styles.stats}>
     <div className={styles.statBox}>
       <p>Ümumi sifariş</p>
+      <BsCart3 className={styles.icon} size={15}  />
       <span>92</span>
     </div>
 
     <div className={styles.statBox}>
       <p>Ümumi gəlir</p>
-      <span>6234.35 ₼</span>
+      <BsCurrencyDollar className={styles.money} size={15}  />
+      <span>64.5 ₼</span>
     </div>
 
     <div className={styles.statBox}>
-      <p>Məhsullar</p>
+      <p>Gözləyən</p>
+      <BsClock className={styles.oclock} size={15}  />
       <span>53</span>
     </div>
 
     <div className={styles.statBox}>
-      <p>Müştəri</p>
+      <p>Hazırlanır</p>
+        <BsClock className={styles.oclock} size={15}  />
       <span>6</span>
     </div>
 
     <div className={styles.statBox}>
       <p>Çatdırılan</p>
+      <BsClock className={styles.oclock} size={15}  />
       <span>10</span>
     </div>
 
     <div className={styles.statBox}>
       <p>Ləğv edilən</p>
+      <AiFillCloseCircle className={styles.close} size={15}  />
       <span>0</span>
     </div>
   </div>
