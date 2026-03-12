@@ -8,12 +8,14 @@ import { BsCurrencyDollar } from "react-icons/bs";
 import { AiFillCloseCircle } from "react-icons/ai";
 import { PiEyeLight } from "react-icons/pi";
 import Pagination from "../../common/components/Pagination/Pagination";
-
+import OrderModal from "../../common/components/OrderModal/OrderModal";
 
  
 
 
 const Orders = () => {
+
+  const [openModal, setOpenModal] = useState(false);
   
   return (
     <Layout>
@@ -80,7 +82,9 @@ const Orders = () => {
         <td>11.99 ₼</td>
         <td><span className={styles.pending}>Gözləyir</span></td>
        
-        <td className={styles.action}> Göstər</td>
+        <td className={styles.action} onClick={() => setOpenModal(true)}>
+          <button>Göstər</button>
+        </td>
       </tr>
 
       <tr>
@@ -90,7 +94,7 @@ const Orders = () => {
         <td>8</td>
         <td>21.99 ₼</td>
         <td><span className={styles.delivery}>Çatdırılır</span></td>
-        <td className={styles.action}>Göstər</td>
+        <td className={styles.action}><button onClick={() => setOpenModal(true)}>Göstər</button></td>
       </tr>
 
       <tr>
@@ -100,21 +104,19 @@ const Orders = () => {
         <td>3</td>
         <td>15.20 ₼</td>
         <td><span className={styles.waiting}>Gözləyir</span></td>
-        <td className={styles.action}>Göstər</td>
+        <td className={styles.action}><button onClick={() => setOpenModal(true)}>Göstər</button></td>
       </tr>
     </tbody>
   </table>
 
-  {/* <div className={styles.pagination}>
-    <span>1</span>
-    <span>2</span>
-    <span>3</span>
-    <span>4</span>
-  </div> */}
+ 
   <Pagination/>
 
     
-       
+    <OrderModal
+  isOpen={openModal}
+  onClose={() => setOpenModal(false)}
+/>   
            
                    
 
