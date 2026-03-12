@@ -6,6 +6,8 @@ import { BsCart3 } from "react-icons/bs";
 import { BsClock } from "react-icons/bs";
 import { BsCurrencyDollar } from "react-icons/bs";
 import { AiFillCloseCircle } from "react-icons/ai";
+import { PiEyeLight } from "react-icons/pi";
+import Pagination from "../../common/components/Pagination/Pagination";
 
 
  
@@ -77,7 +79,8 @@ const Orders = () => {
         <td>5</td>
         <td>11.99 ₼</td>
         <td><span className={styles.pending}>Gözləyir</span></td>
-        <td className={styles.action}>Göstər</td>
+       
+        <td className={styles.action}> Göstər</td>
       </tr>
 
       <tr>
@@ -102,12 +105,13 @@ const Orders = () => {
     </tbody>
   </table>
 
-  <div className={styles.pagination}>
+  {/* <div className={styles.pagination}>
     <span>1</span>
     <span>2</span>
     <span>3</span>
     <span>4</span>
-  </div>
+  </div> */}
+  <Pagination/>
 
     
        
