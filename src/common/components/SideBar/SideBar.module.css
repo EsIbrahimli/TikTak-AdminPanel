@@ -1,7 +1,7 @@
 
 
 .sidebar{
-    width:340px;
+    width:300px;
     height: 600px;
     background-color: #ffff;
     border-radius: 10px;
@@ -36,7 +36,7 @@
 .campaigns,
 .login{
     margin-bottom:100px;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 300;
     color:#2B3043;
     text-decoration: none;

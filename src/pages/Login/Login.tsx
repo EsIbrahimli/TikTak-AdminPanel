@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './Login.module.css'
 import loginSvg from '../../assets/images/login.svg'
@@ -36,8 +36,10 @@ const Login = () => {
     }
 
     try {
-      await login(phone, password)
-    } catch (err: any) {
+      await login(phone, password);
+       navigate(ROUTES.ORDERS);
+  
+    } catch (err: unknown) {
       console.error(err)
       setError(true)
     }
@@ -57,8 +59,9 @@ const Login = () => {
           <label>Telefon</label>
           <input
             className={`${styles.input} ${error ? styles.error : ''}`}
-            type="text"
-            placeholder="Telefon"
+            type="tel"
+            inputMode="tel"
+            placeholder="+994501234567"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
           />

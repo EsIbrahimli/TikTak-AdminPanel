@@ -12,7 +12,7 @@ const SideBar = () => {
                     <li><Link to={ROUTES.CATEGORIES} className={styles.categories}>Kateqoriyalar</Link></li>
                     <li><Link to={ROUTES.PRODUCTS} className={styles.products}>Məhsullar</Link></li>
                     <li><Link to={ROUTES.USERS} className={styles.users}>İstifadəçilər</Link></li>
-                    <li><Link to={ROUTES.LOGIN} className={styles.login}>Çıxış</Link></li>
+                    <li><Link to={ROUTES.LOGOUT} className={styles.login}>Çıxış</Link></li>
 
                 </ul>
             </nav>

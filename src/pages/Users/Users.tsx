@@ -5,7 +5,7 @@ import React from 'react'
 const Users = () => {
   return (
     <Layout>
-       <h1>Users</h1>
+       <h3>Users</h3>
     </Layout>
   )
 }

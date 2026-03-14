@@ -1,21 +1,14 @@
-.wrapper{
-background:#f5f6fa;
-padding:40px;
-min-height:100vh;
-}
 
-.container{
-background:white;
-padding:25px;
-border-radius:10px;
-box-shadow:0 2px 8px rgba(0,0,0,0.05);
-}
 
 .header{
 display:flex;
 justify-content:space-between;
 align-items:center;
 margin-bottom:20px;
+}
+
+.title{
+    font-size:28px;
 }
 
 .actions{
@@ -29,15 +22,6 @@ border:1px solid #ddd;
 border-radius:6px;
 }
 
-.addBtn{
-background:#22c55e;
-color:white;
-border:none;
-padding:8px 14px;
-border-radius:6px;
-cursor:pointer;
-}
-
 .table{
 width:100%;
 border-collapse:collapse;
@@ -47,6 +31,8 @@ border-collapse:collapse;
 background:#f3f4f6;
 padding:12px;
 text-align:left;
+font-size:14px;
+color:#666;
 }
 
 .table td{

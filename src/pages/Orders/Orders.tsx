@@ -8,7 +8,7 @@ import { BsCurrencyDollar } from "react-icons/bs";
 import { AiFillCloseCircle } from "react-icons/ai";
 import { PiEyeLight } from "react-icons/pi";
 import Pagination from "../../common/components/Pagination/Pagination";
-import OrderModal from "../../common/components/OrderModal/OrderModal";
+import OrderModal from "./components/OrderModal/OrderModal";
 
  
 
@@ -49,7 +49,7 @@ const Orders = () => {
 
     <div className={styles.statBox}>
       <p>Çatdırılan</p>
-      <BsClock className={styles.oclock} size={15}  />
+      <PiEyeLight className={styles.oclock} size={15}  />
       <span>10</span>
     </div>
 
