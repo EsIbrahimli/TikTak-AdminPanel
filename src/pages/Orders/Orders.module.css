@@ -63,7 +63,10 @@ white-space: nowrap;
 
 
 /* table */
-
+.tableContainer{
+    width: 100%;
+overflow-x:auto;
+}
 .table{
 width:100%;
 border-collapse:collapse;
@@ -86,6 +89,8 @@ white-space: nowrap;
 padding:12px;
 font-size:10px;
 border-bottom:1px solid #f2f2f2;
+white-space: nowrap;
+
 }
 
 /* status */

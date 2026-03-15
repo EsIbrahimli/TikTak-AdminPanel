@@ -86,7 +86,7 @@ console.log(localStorage.getItem("token"))
       <span>{canceled}</span>
     </div>
   </div>
-
+<div className={styles.tableContainer}>
   <table className={styles.table}>
     <thead>
       <tr>
@@ -136,6 +136,7 @@ console.log(localStorage.getItem("token"))
       
     </tbody>
   </table>
+  </div>
 
  
   <Pagination
