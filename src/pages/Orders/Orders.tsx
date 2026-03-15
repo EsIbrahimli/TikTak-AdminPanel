@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Layout from "../../common/components/Layout/Layout";
 import styles from "./Orders.module.css";
 import { BsCart3 } from "react-icons/bs";
@@ -9,6 +9,11 @@ import { AiFillCloseCircle } from "react-icons/ai";
 import { PiEyeLight } from "react-icons/pi";
 import Pagination from "../../common/components/Pagination/Pagination";
 import OrderModal from "../../common/components/OrderModal/OrderModal";
+import { FaSort } from "react-icons/fa";
+import { AiFillFilter } from "react-icons/ai";
+import { useOrderStore } from "../../common/store/useOrderStore"; 
+import { fetchOrders, fetchOrdersStats } from "../../services/ordersApi"; 
+ 
 
  
 
@@ -16,6 +21,28 @@ import OrderModal from "../../common/components/OrderModal/OrderModal";
 const Orders = () => {
 
   const [openModal, setOpenModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+const ordersPerPage = 5;
+
+  const { orders, setOrders, totalSales, totalOrders, pending, preparing, delivered, canceled, getOrdersAndStats, loading, error, } =
+    useOrderStore();
+useEffect(() => {
+  getOrdersAndStats(); // store içində hər şeyi çəkir və set edir
+}, [getOrdersAndStats]);
+const indexOfLastOrder = currentPage * ordersPerPage;
+const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+
+const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+
+if (loading) return <p>Yüklənir...</p>;
+if (error) return <p>Xəta: {error}</p>;
+console.log(localStorage.getItem("token"))
+ 
+
+ 
+
+      // Dashboard üçün
+      
   
   return (
     <Layout>
@@ -24,93 +51,98 @@ const Orders = () => {
 
   <div className={styles.stats}>
     <div className={styles.statBox}>
-      <p>Ümumi sifariş</p>
+      <p>Ümumi sifariş {totalOrders}</p>
       <BsCart3 className={styles.icon} size={15}  />
-      <span>92</span>
+      <span>{totalOrders}</span>
     </div>
 
     <div className={styles.statBox}>
       <p>Ümumi gəlir</p>
       <BsCurrencyDollar className={styles.money} size={15}  />
-      <span>64.5 ₼</span>
+      <span>{totalSales} ₼</span>
     </div>
 
     <div className={styles.statBox}>
       <p>Gözləyən</p>
       <BsClock className={styles.oclock} size={15}  />
-      <span>53</span>
+      <span>{pending}</span>
     </div>
 
     <div className={styles.statBox}>
       <p>Hazırlanır</p>
         <BsClock className={styles.oclock} size={15}  />
-      <span>6</span>
+      <span>{preparing}</span>
     </div>
 
     <div className={styles.statBox}>
       <p>Çatdırılan</p>
       <BsClock className={styles.oclock} size={15}  />
-      <span>10</span>
+      <span>{delivered}</span>
     </div>
 
     <div className={styles.statBox}>
       <p>Ləğv edilən</p>
       <AiFillCloseCircle className={styles.close} size={15}  />
-      <span>0</span>
+      <span>{canceled}</span>
     </div>
   </div>
 
   <table className={styles.table}>
     <thead>
       <tr>
-        <th>No</th>
-        <th>Tarix</th>
-        <th>Çatdırılma ünvanı</th>
-        <th>Məhsul sayı</th>
-        <th>Subtotal</th>
-        <th>Status</th>
+        
+        <th>No<FaSort className={styles.sort} size={12} />
+         <AiFillFilter className={styles.filter} size={12} /></th>
+        <th>Tarix<FaSort className={styles.sort} size={12} />
+         <AiFillFilter className={styles.filter} size={12} /></th>
+        <th>Çatdırılma ünvanı<FaSort className={styles.sort} size={12} />
+         <AiFillFilter className={styles.filter} size={12} /></th>
+        <th>Məhsul sayı<FaSort className={styles.sort} size={12} />
+         <AiFillFilter className={styles.filter} size={12} /></th>
+        <th>Subtotal<FaSort className={styles.sort} size={12} />
+         <AiFillFilter className={styles.filter} size={12} /></th>
+        <th>Status<FaSort className={styles.sort} size={12} />
+         <AiFillFilter className={styles.filter} size={12} /></th>
         <th>Əməliyyat</th>
       </tr>
     </thead>
 
     <tbody>
-      <tr>
-        <td>ORD-20</td>
-        <td>11-02</td>
-        <td>Xətai rayonu</td>
-        <td>5</td>
-        <td>11.99 ₼</td>
-        <td><span className={styles.pending}>Gözləyir</span></td>
+      {currentOrders.map((order) => (
+      <tr key={order.id}>
+        <td>{order.orderNumber}</td>
+        <td>{new Date(order.createdAt).toLocaleDateString()}</td>
+        <td>{order.address}</td>
+        <td>{order.items.reduce((sum, item) => sum + item.quantity, 0)}</td>
+        <td>{order.total} ₼</td>
+        <td><span  className={
+            order.status === "PENDING"
+              ? styles.waiting
+              : order.status === "PREPARING"
+              ? styles.preparing
+              : order.status === "DELIVERED"
+              ? styles.delivery
+              : styles.canceled
+          }>{order.status}</span></td>
        
         <td className={styles.action} onClick={() => setOpenModal(true)}>
           <button>Göstər</button>
         </td>
-      </tr>
+      </tr>))}
 
-      <tr>
-        <td>ORD-21</td>
-        <td>11-02</td>
-        <td>Xətai rayonu</td>
-        <td>8</td>
-        <td>21.99 ₼</td>
-        <td><span className={styles.delivery}>Çatdırılır</span></td>
-        <td className={styles.action}><button onClick={() => setOpenModal(true)}>Göstər</button></td>
-      </tr>
+     
 
-      <tr>
-        <td>ORD-22</td>
-        <td>11-02</td>
-        <td>Əcəmi</td>
-        <td>3</td>
-        <td>15.20 ₼</td>
-        <td><span className={styles.waiting}>Gözləyir</span></td>
-        <td className={styles.action}><button onClick={() => setOpenModal(true)}>Göstər</button></td>
-      </tr>
+     
+      
     </tbody>
   </table>
 
  
-  <Pagination/>
+  <Pagination
+    currentPage={currentPage}
+  totalItems={orders.length}
+  itemsPerPage={ordersPerPage}
+  onPageChange={setCurrentPage}/>
 
     
     <OrderModal
@@ -123,6 +155,6 @@ const Orders = () => {
        
       
     </Layout>
-  );
-};
+  )};
+;
 export default Orders

@@ -74,10 +74,12 @@ overflow:hidden;
 
 .table th{
 text-align:left;
-padding:12px;
-font-size:14px;
+padding:11px;
+font-size:12px;
 color:#666;
 border-bottom:1px solid #eee;
+white-space: nowrap;
+
 }
 
 .table td{
