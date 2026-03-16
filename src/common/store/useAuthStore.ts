@@ -14,16 +14,25 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   login: async (phone, password) => {
     set({ loading: true })
+    try {
+      const res = await AuthApi.login(phone, password)
+      console.log("Login response:", res)
 
-    const data = await AuthApi.login(phone, password)
-    console.log("Login response:", data.data)
+      const token =
+        res.data?.data?.tokens?.access_token;
 
-    localStorage.setItem("token", data.data.tokens.access_token)
+      if (!token) {
+        throw new Error("Access token missing in login response")
+      }
 
-    set({
-      token: data.data.tokens.access_token,
-      loading: false
-    })
+      localStorage.setItem("token", token)
+
+      set({
+        token
+      })
+    } finally {
+      set({ loading: false })
+    }
   },
 
   logout: () => {

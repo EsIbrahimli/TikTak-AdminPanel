@@ -1,49 +1,33 @@
 import { useEffect, useState } from "react";
-import { useCategoriesStore , Category } from "../../common/store/useCategoriesStore";
+import { useCategoriesStore } from "../../common/store/useCategoriesStore";
 import ConfirmDeleteModal from "../../common/components/ConfirmDeleteModal";
 import styles from "./categories.module.css";
+import Layout from "../../common/components/Layout/Layout";
+import Button from "../../common/components/Button/Button";
+import Pagination from "../../common/components/Pagination/Pagination";
+import Loading from "../../common/components/Loading/Loading";
+
 
 export default function Categories() {
   const { categories, fetchCategories, removeCategory, loading } =
     useCategoriesStore();
 
-  const [search, setSearch] = useState("");
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
 
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
 
-  const filtered: Category[] = categories.filter((c) =>
-    c.name.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const lastIndex = currentPage * itemsPerPage;
-  const firstIndex = lastIndex - itemsPerPage;
-  const currentCategories = filtered.slice(firstIndex, lastIndex);
-
-  const totalPages = Math.ceil(filtered.length / itemsPerPage);
-
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.container}>
+    <Layout>
         <div className={styles.header}>
-          <h2>Kateqoriyalar</h2>
+          <h2 className={styles.title}>Kateqoriyalar</h2>
 
           <div className={styles.actions}>
-            <input
-              className={styles.search}
-              placeholder="Axtar..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-
-            <button className={styles.addBtn}>
-              + Yeni Kateqoriya
-            </button>
+            <Button size="small" onClick={() => alert("Bu funksiya hələ hazırlanır")}>
+              + Yeni Kateqoriya  
+            </Button>
           </div>
         </div>
 
@@ -62,12 +46,18 @@ export default function Categories() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={6}>Yüklənir...</td>
+                <td colSpan={6}>
+                  <Loading />
+                </td>
+              </tr>
+            ) : categories.length === 0 ? (
+              <tr>
+                <td colSpan={6}>Kateqoriya tapilmadi.</td>
               </tr>
             ) : (
-              currentCategories.map((cat, index) => (
+              categories.map((cat, index) => (
                 <tr key={cat.id}>
-                  <td>{firstIndex + index + 1}</td>
+                  <td>{index + 1}</td>
 
                   <td>
                     <img
@@ -106,34 +96,7 @@ export default function Categories() {
         </table>
 
         {/* PAGINATION */}
-        <div className={styles.pagination}>
-          <button
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage(currentPage - 1)}
-          >
-            Prev
-          </button>
-
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i}
-              className={
-                currentPage === i + 1 ? styles.activePage : ""
-              }
-              onClick={() => setCurrentPage(i + 1)}
-            >
-              {i + 1}
-            </button>
-          ))}
-
-          <button
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage(currentPage + 1)}
-          >
-            Next
-          </button>
-        </div>
-      </div>
+        <Pagination />
 
       {deleteId !== null && (
         <ConfirmDeleteModal
@@ -144,6 +107,7 @@ export default function Categories() {
           onCancel={() => setDeleteId(null)}
         />
       )}
-    </div>
+
+    </Layout>
   );
 }

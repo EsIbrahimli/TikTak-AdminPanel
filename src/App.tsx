@@ -11,6 +11,7 @@ const Campaigns = lazy(() => import('./pages/Campaigns/Campaigns'))
 const Categories = lazy(() => import('./pages/Categoriess/Categories'))
 const Products = lazy(() => import('./pages/Products/Products'))
 const Users = lazy(() => import('./pages/Users/Users'))
+const Logout = lazy(() => import('./pages/Logout/Logout'))
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
         <Route path={ROUTES.CATEGORIES} element={<Categories />} />
         <Route path={ROUTES.PRODUCTS} element={<Products />} />
         <Route path={ROUTES.USERS} element={<Users />} />
+        <Route path={ROUTES.LOGOUT} element={<Logout />} />
       </Routes>
     </Suspense>
   )

@@ -1,18 +1,45 @@
-const BASE_URL = "http://localhost:3000";
+import { axiosInstance } from "./axiosInstance"
 
-export const getCategories = async () => {
-  const res = await fetch(`${BASE_URL}/api/tiktak/admin/categories`);
-  const data = await res.json();
+export interface Category {
+	id: number
+	name: string
+	img_url: string
+	description: string
+	created_at: string
+	updated_at?: string
+}
 
-  if (data.result) {
-    return data.data.categories;
-  }
+export interface CategoryPayload {
+	name: string
+	description: string
+	img_url?: string
+}
 
-  return [];
-};
 
-export const deleteCategory = async (id: number) => {
-  await fetch(`${BASE_URL}/api/tiktak/admin/categories/${id}`, {
-    method: "DELETE",
-  });
-};
+export const getCategories = async (): Promise<Category[]> => {
+	const res = await axiosInstance.get("admin/category")
+	return res.data
+}
+
+export const getCategoryById = async (id: number | string): Promise<Category> => {
+	const res = await axiosInstance.get(`admin/categories/${id}`)
+	return res.data
+}
+
+export const createCategory = async (payload: CategoryPayload): Promise<Category> => {
+	const res = await axiosInstance.post("admin/category", payload)
+	return res.data
+}
+
+export const updateCategory = async (
+	id: number | string,
+	payload: Partial<CategoryPayload>
+): Promise<Category> => {
+	const res = await axiosInstance.put(`admin/categories/${id}`, payload)
+	return res.data
+}
+
+export const deleteCategory = async (id: number | string): Promise<void> => {
+	const res= await axiosInstance.delete(`admin/categories/${id}`)
+  return res.data
+}
