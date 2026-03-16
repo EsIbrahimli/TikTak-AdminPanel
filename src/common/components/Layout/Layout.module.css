@@ -1,17 +1,14 @@
 .mainContainer {
     display: flex;
-    width: 100%;
+    width: 80%;
     margin: auto;
     justify-content: space-around;
     margin-top: 80px;
     gap: 20px;
-    
-    
-   
 }
 
 .main {
-    
+    width: 70%;
     height: 600px;
     background-color: #ffff;
     border-radius: 10px;

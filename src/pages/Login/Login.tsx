@@ -54,8 +54,10 @@ const Login = () => {
         <h1 className={styles.title}>TIK TAK ADMIN</h1>
       </div>
 
+      <div className={styles.divider} />
+
       <div className={styles.form}>
-      <h1>Admin Panel</h1>
+      <h1 className={styles.formTitle}>Admin Panel</h1>
         <div className={styles.inputContainer}>
           <label>Telefon</label>
           <input
