@@ -55,6 +55,7 @@ const Login = () => {
       </div>
 
       <div className={styles.form}>
+      <h1>Admin Panel</h1>
         <div className={styles.inputContainer}>
           <label>Telefon</label>
           <input

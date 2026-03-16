@@ -1,7 +1,7 @@
 
 import axios from "axios"
 
-export const axiosInstance = axios.create({
+ export const axiosInstance = axios.create({
   baseURL: "https://api.sarkhanrahimli.dev/api/tiktak", 
   headers: {
     "Content-Type": "application/json"
