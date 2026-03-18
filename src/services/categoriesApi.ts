@@ -17,7 +17,7 @@ export interface CategoryPayload {
 
 
 export const getCategories = async (): Promise<Category[]> => {
-	const res = await axiosInstance.get("admin/category")
+	const res = await axiosInstance.get("admin/categories")
 	return res.data
 }
 

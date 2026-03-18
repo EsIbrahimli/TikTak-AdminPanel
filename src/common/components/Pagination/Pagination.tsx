@@ -1,14 +1,28 @@
 import styles from "./Pagination.module.css";
 
-const Pagination = ({ currentPage, totalItems, itemsPerPage, onPageChange }) => {
+interface PaginationProps {
+  currentPage: number;
+  totalItems: number;
+  itemsPerPage: number;
+  onPageChange: (page: number) => void;
+}
 
+const Pagination = ({ currentPage, totalItems, itemsPerPage, onPageChange }: PaginationProps) => {
   const totalPages = Math.ceil(totalItems / itemsPerPage);
-   const maxPagesToShow = 5;
+  const maxPagesToShow = 5;
+
+  if (totalPages <= 1) {
+    return null;
+  }
 
   let startPage = Math.max(1, currentPage - 2);
   let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
 
-  const pages = [];
+  if (endPage - startPage + 1 < maxPagesToShow) {
+    startPage = Math.max(1, endPage - maxPagesToShow + 1);
+  }
+
+  const pages: number[] = [];
 
   for (let i = startPage; i <= endPage; i++) {
     pages.push(i);

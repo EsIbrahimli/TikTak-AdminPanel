@@ -16,6 +16,39 @@ interface CategoriesState {
   removeCategory: (id: number) => Promise<void>;
 }
 
+type CategoriesApiResponse =
+  | Category[]
+  | {
+      data?: Category[] | { data?: Category[]; categories?: Category[] };
+      categories?: Category[];
+    };
+
+const normalizeCategories = (payload: CategoriesApiResponse): Category[] => {
+  if (Array.isArray(payload)) {
+    return payload;
+  }
+
+  if (Array.isArray(payload?.data)) {
+    return payload.data;
+  }
+
+  if (Array.isArray(payload?.categories)) {
+    return payload.categories;
+  }
+
+  if (payload?.data && typeof payload.data === "object") {
+    if (Array.isArray(payload.data.data)) {
+      return payload.data.data;
+    }
+
+    if (Array.isArray(payload.data.categories)) {
+      return payload.data.categories;
+    }
+  }
+
+  return [];
+};
+
 export const useCategoriesStore = create<CategoriesState>((set) => ({
   categories: [],
   loading: false,
@@ -24,9 +57,10 @@ export const useCategoriesStore = create<CategoriesState>((set) => ({
     set({ loading: true });
     try {
       const data = await getCategories();
+      const normalizedCategories = normalizeCategories(data as CategoriesApiResponse);
 
       set({
-        categories: data,
+        categories: normalizedCategories,
       });
     } finally {
       set({ loading: false });
