@@ -22,6 +22,7 @@ const Orders = () => {
   const token = useAuthStore((state) => state.token);
 
   const [openModal, setOpenModal] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const ordersPerPage = 5;
 
@@ -128,9 +129,14 @@ const Orders = () => {
                         : styles.canceled
                 }>{order.status}</span></td>
 
-                <td className={styles.action} onClick={() => setOpenModal(true)}>
-                  <button>Göstər</button>
-                </td>
+    <td className={styles.action}>
+  <button onClick={() => {
+    setSelectedOrder(order); // hansı order seçildiyini saxlayır
+    setOpenModal(true);      // modal açır
+  }}>
+    Göstər
+  </button>
+</td>
               </tr>))}
           </tbody>
         </table>
@@ -143,10 +149,11 @@ const Orders = () => {
         onPageChange={setCurrentPage} />
 
 
-      <OrderModal
-        isOpen={openModal}
-        onClose={() => setOpenModal(false)}
-      />
+     <OrderModal
+  isOpen={openModal}
+  onClose={() => setOpenModal(false)}
+  order={selectedOrder}
+/>
 
     </Layout>
   )
