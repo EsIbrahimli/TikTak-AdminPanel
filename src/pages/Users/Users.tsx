@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react'
 import { useUserStore } from '../../common/store/useUserStore'
 const Users = () => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [selectedUser, setSelectedUser] = React.useState(null);
   const [users,setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 const itemsPerPage = 5;
@@ -79,7 +80,10 @@ fetchUsers();
 </td>
 
 <td>
-<button className={styles.actionBtn} onClick={() => setIsModalOpen(true)}>Göstər</button>
+<button className={styles.actionBtn} onClick={() => {
+  setSelectedUser(user);
+  setIsModalOpen(true);
+}}>Göstər</button>
 </td>
 
 </tr>
@@ -93,8 +97,9 @@ currentPage={currentPage}
   itemsPerPage={itemsPerPage}
   onPageChange={setCurrentPage}/>
 <UsersModal
-isOpen={isModalOpen}
-onClose={() => setIsModalOpen(false)}
+  isOpen={isModalOpen}
+  onClose={() => setIsModalOpen(false)}
+  user={selectedUser}
 />
 
 

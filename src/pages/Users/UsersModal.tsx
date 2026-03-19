@@ -1,7 +1,7 @@
 import styles from './UsersModal.module.css'
 
-const UsersModal = ({ isOpen, onClose }) => {
-  if (!isOpen) return null; 
+const UsersModal = ({ isOpen, onClose, user }) => {
+  if (!isOpen || !user) return null; 
   return (
     <div className={styles.modalOverlay}>
   <div className={styles.modal}>
