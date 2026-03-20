@@ -2,12 +2,16 @@
 background:#f8f8f8;
 padding:20px;
 border-radius:10px;
+ width: 100%;
+  margin: 0 auto;  
 }
 
 .title{
 font-size:28px;
 font-weight:600;
 margin-bottom:20px;
+ border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 22px;
 }
 
 /* stats */
@@ -34,13 +38,13 @@ box-shadow:0 1px 4px rgba(0,0,0,0.1);
 }
 
 .statBox p{
-font-size:12px;
+font-size:13px;
 color:#777;
 white-space: nowrap;
 }
 
 .statBox span{
-font-size:16px;
+font-size:22px;
 font-weight:600;
 white-space: nowrap;
 }
@@ -82,7 +86,7 @@ overflow:hidden;
 .table th{
 text-align:left;
 padding:11px;
-font-size:12px;
+font-size:13px;
 color:#666;
 border-bottom:1px solid #eee;
 white-space: nowrap;
@@ -91,7 +95,7 @@ white-space: nowrap;
 
 .table td{
 padding:12px;
-font-size:10px;
+font-size:13px;
 border-bottom:1px solid #f2f2f2;
 white-space: nowrap;
 
@@ -122,12 +126,34 @@ padding:4px 10px;
 border-radius:6px;
 font-size:12px;
 }
+.preparing {
+  background: #fff3cd;
+  color: #856404;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  display: inline-block; /* 🔥 bunu əlavə et */
+}
 
 /* action */
 
-.action{
-color:#555;
-cursor:pointer;
+.action button {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #555;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.action button:hover {
+  background: #eef2ff;
+  border-color: #6366f1;
+  color: #4f46e5;
 }
 
 /* pagination */

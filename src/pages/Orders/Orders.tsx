@@ -24,6 +24,7 @@ const Orders = () => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: null }); // direction: "asc" | "desc" | null
   const ordersPerPage = 5;
 
   const { orders, totalSales, totalOrders, pending, preparing, delivered, canceled, getOrdersAndStats, loading, error } =
@@ -47,6 +48,17 @@ const Orders = () => {
 
   if (loading) return <p>Yüklənir...</p>;
   if (error) return <p>Xəta: {error}</p>;
+  const statusMap = {
+  PENDING: "Gözləyir",
+  PREPARING: "Hazırlanır",
+  DELIVERED: "Çatdırılıb",
+  CANCELED: "Ləğv edilib"
+};
+const handleSort = (key, direction) => {
+  setSortConfig({ key, direction });
+};
+// 1. sort edilmiş sifarişlər
+
 
   return (
     <Layout>
@@ -97,6 +109,7 @@ const Orders = () => {
 
               <th>No<FaSort className={styles.sort} size={12} />
                 <AiFillFilter className={styles.filter} size={12} /></th>
+ 
               <th>Tarix<FaSort className={styles.sort} size={12} />
                 <AiFillFilter className={styles.filter} size={12} /></th>
               <th>Çatdırılma ünvanı<FaSort className={styles.sort} size={12} />
@@ -127,13 +140,13 @@ const Orders = () => {
                       : order.status === "DELIVERED"
                         ? styles.delivery
                         : styles.canceled
-                }>{order.status}</span></td>
+                }>{statusMap[order.status]}</span></td>
 
     <td className={styles.action}>
   <button onClick={() => {
     setSelectedOrder(order); // hansı order seçildiyini saxlayır
     setOpenModal(true);      // modal açır
-  }}>
+  }}><PiEyeLight size={13} />
     Göstər
   </button>
 </td>

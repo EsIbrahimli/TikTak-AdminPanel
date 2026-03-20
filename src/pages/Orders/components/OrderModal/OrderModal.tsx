@@ -42,10 +42,11 @@ const OrderModal = ({ isOpen, onClose, order }) => {
         <div className={styles.section}>
           <h4>Məhsullar ({order.items.length})</h4>
           {order.items.map((item) => (
-            <div key={item.id} className={styles.product}>
+            <div key={item.id} className={styles.produc}>
+              <div className={styles.productLeft}>
               <img
                 src={item.image || "https://via.placeholder.com/50"}
-                alt="product"
+                alt={item.name}
               />
 
           
@@ -53,6 +54,7 @@ const OrderModal = ({ isOpen, onClose, order }) => {
             <div>
                 <p className={styles.productTitle}>{item.name}</p>
                 <span>{item.category} - {item.weight}</span>
+              </div>
               </div>
               <div className={styles.productPrice}>
                 {item.price} ₼
