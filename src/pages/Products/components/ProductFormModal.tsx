@@ -9,11 +9,23 @@ interface CategoryOption {
 interface ProductFormValues {
   name: string;
   description: string;
-  price: string;
+  price: number | "";
   img_url: string;
   category_id: string;
   type: string;
 }
+
+const TYPE_OPTIONS = [
+  "kg",
+  "gr",
+  "litre",
+  "ml",
+  "meter",
+  "cm",
+  "mm",
+  "piece",
+  "packet",
+];
 
 interface ProductSubmitPayload {
   name: string;
@@ -49,7 +61,9 @@ const getInitialValues = (initialValues?: ProductInitialValues): ProductFormValu
   description: initialValues?.description ?? "",
   price:
     typeof initialValues?.price === "number" && Number.isFinite(initialValues.price)
-      ? String(initialValues.price)
+      ? initialValues.price
+      : typeof initialValues?.price === "string" && initialValues.price.trim() && Number.isFinite(Number(initialValues.price))
+      ? Number(initialValues.price)
       : "",
   img_url: initialValues?.img_url ?? "",
   category_id:
@@ -79,7 +93,15 @@ export default function ProductFormModal({
   const handleChange =
     (field: keyof ProductFormValues) =>
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-      setValues((prev) => ({ ...prev, [field]: event.target.value }));
+      setValues((prev) => ({
+        ...prev,
+        [field]:
+          field === "price"
+            ? ((event.target as HTMLInputElement).value === ""
+                ? ""
+                : Number((event.target as HTMLInputElement).value))
+            : event.target.value,
+      }));
     };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -92,7 +114,7 @@ export default function ProductFormModal({
       return;
     }
 
-    if (!Number.isFinite(parsedPrice) || parsedPrice < 0) {
+    if (values.price === "" || !Number.isFinite(parsedPrice) || parsedPrice < 0) {
       return;
     }
 
@@ -174,12 +196,19 @@ export default function ProductFormModal({
           <div className={styles.row}>
             <label className={styles.label}>
               Növ
-              <input
-                className={styles.input}
+              <select
+                className={styles.select}
                 value={values.type}
                 onChange={handleChange("type")}
-                placeholder="Məs: Əsas yemək"
-              />
+                required
+              >
+                <option value="">Seçin</option>
+                {TYPE_OPTIONS.map((typeOption) => (
+                  <option key={typeOption} value={typeOption}>
+                    {typeOption}
+                  </option>
+                ))}
+              </select>
             </label>
 
             <label className={styles.label}>

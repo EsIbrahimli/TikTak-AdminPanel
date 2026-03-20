@@ -1,10 +1,5 @@
 import { create } from "zustand";
-import {
-  getProducts,
-  createProduct,
-  updateProduct,
-  deleteProduct,
-} from "../../services/productsApi";
+import { getProducts, createProduct, updateProduct, deleteProduct } from "../../services/productsApi";
 import type { Product, ProductPayload } from "../../services/productsApi";
 
 interface ProductsState {
@@ -17,75 +12,51 @@ interface ProductsState {
   removeProduct: (id: number) => Promise<boolean>;
 }
 
-const toNum = (val: unknown): number | null => {
-  if (typeof val === "number" && Number.isFinite(val)) return val;
-  if (typeof val === "string" && val.trim()) {
-    const parsed = Number(val);
-    return Number.isFinite(parsed) ? parsed : null;
-  }
-  return null;
-};
-
-const normalizeSingleProduct = (obj: unknown): Product | null => {
-  if (!obj || typeof obj !== "object") return null;
-  
+const toProduct = (obj: unknown): Product | null => {
+  if (!obj || typeof obj !== "object" || Array.isArray(obj)) return null;
   const data = obj as Record<string, unknown>;
-  const id = toNum(data.id);
-  
-  if (id === null) return null;
+  const id = Number(data.id);
+  if (!Number.isFinite(id) || id <= 0) return null;
 
-  const categoryId =
-    toNum(data.category_id) ??
-    toNum((data.category as any)?.id) ??
-    null;
+  const rawPrice = data.price;
+  const numericPrice =
+    typeof rawPrice === "number"
+      ? rawPrice
+      : typeof rawPrice === "string"
+      ? Number(rawPrice)
+      : 0;
 
   return {
     ...(data as unknown as Product),
     id,
-    category_id: categoryId,
+    name:
+      typeof data.name === "string"
+        ? data.name
+        : typeof data.title === "string"
+        ? data.title
+        : "",
+    price: Number.isFinite(numericPrice) ? numericPrice : 0,
+    category_id: Number(data.category_id) || Number((data.category as any)?.id) || null,
   };
 };
 
-const normalizeProducts = (data: unknown): Product[] => {
-  const list = Array.isArray(data)
-    ? data
-    : Array.isArray((data as any)?.data)
-    ? (data as any).data
-    : Array.isArray((data as any)?.products)
-    ? (data as any).products
-    : Array.isArray((data as any)?.data?.data)
-    ? (data as any).data.data
-    : [];
-
-  return list
-    .map((item) => normalizeSingleProduct(item))
-    .filter((item): item is Product => item !== null);
+const toProductList = (data: unknown): Product[] => {
+  const list =
+    Array.isArray(data) ? data :
+    Array.isArray((data as any)?.data) ? (data as any).data :
+    Array.isArray((data as any)?.products) ? (data as any).products :
+    Array.isArray((data as any)?.data?.data) ? (data as any).data.data :
+    [];
+  return list.map(toProduct).filter((p): p is Product => p !== null);
 };
 
-const normalizeProduct = (data: unknown): Product | null => {
-  let result = normalizeSingleProduct(data);
-  if (result) return result;
-
-  const obj = (data as Record<string, unknown>) ?? {};
-  result = normalizeSingleProduct(obj.data);
-  if (result) return result;
-
-  result = normalizeSingleProduct((obj.data as any)?.data);
-  if (result) return result;
-
-  result = normalizeSingleProduct((obj.data as any)?.product);
-  if (result) return result;
-
-  result = normalizeSingleProduct(obj.product);
-  if (result) return result;
-
-  if (Array.isArray(obj.products) && obj.products.length > 0) {
-    result = normalizeSingleProduct(obj.products[0]);
-    if (result) return result;
-  }
-
-  return null;
-};
+const toSingleProduct = (data: unknown): Product | null =>
+  toProduct(data) ??
+  toProduct((data as any)?.data) ??
+  toProduct((data as any)?.product) ??
+  toProduct((data as any)?.data?.data) ??
+  toProduct((data as any)?.data?.product) ??
+  null;
 
 export const useProductsStore = create<ProductsState>((set) => ({
   products: [],
@@ -96,8 +67,8 @@ export const useProductsStore = create<ProductsState>((set) => ({
     set({ loading: true, error: null });
     try {
       const data = await getProducts();
-      set({ products: normalizeProducts(data), error: null });
-    } catch (err: unknown) {
+      set({ products: toProductList(data), error: null });
+    } catch (err) {
       set({ error: err instanceof Error ? err.message : "Xəta" });
     } finally {
       set({ loading: false });
@@ -108,17 +79,14 @@ export const useProductsStore = create<ProductsState>((set) => ({
     set({ loading: true, error: null });
     try {
       const res = await createProduct(payload);
-      const normalized = normalizeProduct(res);
-      if (!normalized) throw new Error("Invalid response");
-
-      set((state) => ({
-        products: [normalized, ...state.products],
-        error: null,
-      }));
+      const product = toSingleProduct(res);
+      if (product) {
+        set((state) => ({ products: [product, ...state.products], error: null }));
+      }
       return true;
     } catch (err) {
       set({ error: err instanceof Error ? err.message : "Xəta" });
-        return false;
+      return false;
     } finally {
       set({ loading: false });
     }
@@ -128,17 +96,17 @@ export const useProductsStore = create<ProductsState>((set) => ({
     set({ loading: true, error: null });
     try {
       const res = await updateProduct(id, payload);
-      const normalized = normalizeProduct(res);
-      if (!normalized) throw new Error("Invalid response");
-
-      set((state) => ({
-        products: state.products.map((p) => (p.id === id ? normalized : p)),
-        error: null,
-      }));
+      const product = toSingleProduct(res);
+      if (product) {
+        set((state) => ({
+          products: state.products.map((p) => (p.id === id ? product : p)),
+          error: null,
+        }));
+      }
       return true;
     } catch (err) {
       set({ error: err instanceof Error ? err.message : "Xəta" });
-        return false;
+      return false;
     } finally {
       set({ loading: false });
     }
@@ -148,10 +116,7 @@ export const useProductsStore = create<ProductsState>((set) => ({
     set({ loading: true, error: null });
     try {
       await deleteProduct(id);
-      set((state) => ({
-        products: state.products.filter((p) => p.id !== id),
-        error: null,
-      }));
+      set((state) => ({ products: state.products.filter((p) => p.id !== id), error: null }));
       return true;
     } catch (err) {
       set({ error: err instanceof Error ? err.message : "Xəta" });

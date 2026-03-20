@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useProductsStore } from "../../common/store/useProductStore";
 import { useCategoriesStore } from "../../common/store/useCategoriesStore";
 import type { Product, ProductPayload } from "../../services/productsApi";
@@ -13,8 +13,15 @@ import styles from "./Products.module.css";
 const ITEMS_PER_PAGE = 5;
 
 export default function Products() {
-  const { products, loading, fetchProducts, addProduct, editProduct, removeProduct } =
+  const { products,
+    loading,
+    error,
+    fetchProducts,
+    addProduct,
+    editProduct,
+    removeProduct } =
     useProductsStore();
+    
   const { categories, fetchCategories } = useCategoriesStore();
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -30,31 +37,37 @@ export default function Products() {
   const editingProduct = products.find((p) => p.id === editingId) ?? null;
   const deletingProduct = products.find((p) => p.id === deleteId) ?? null;
 
-  const getCategoryName = (product: Product) => {
+  const getCategoryName = useCallback((product: Product) => {
     if (product.category?.name) return product.category.name;
     const categoryId = Number(product.category_id ?? product.category?.id);
     return categories.find((c) => Number(c.id) === categoryId)?.name || "-";
-  };
+  }, [categories]);
 
-const handleCreate = async (payload: ProductPayload) => {
-  await addProduct(payload);
-  setIsCreateOpen(false);
-  fetchProducts();
-};
+  const handleCreate = useCallback(async (payload: ProductPayload) => {
+    const success = await addProduct(payload);
+    if (success) {
+      setIsCreateOpen(false);
+      fetchProducts();
+    }
+  }, [addProduct, fetchProducts]);
 
-const handleEdit = async (payload: ProductPayload) => {
-  if (!editingId) return;
-  await editProduct(editingId, payload);
-  setEditingId(null);
-  fetchProducts();
-};
+  const handleEdit = useCallback(async (payload: ProductPayload) => {
+    if (!editingId) return;
+    const success = await editProduct(editingId, payload);
+    if (success) {
+      setEditingId(null);
+      fetchProducts();
+    }
+  }, [editProduct, editingId, fetchProducts]);
 
-const handleDelete = async () => {
-  if (!deleteId) return;
-  await removeProduct(deleteId);
-  setDeleteId(null);
-  fetchProducts();
-};
+  const handleDelete = useCallback(async () => {
+    if (!deleteId) return;
+    const success = await removeProduct(deleteId);
+    if (success) {
+      setDeleteId(null);
+      fetchProducts();
+    }
+  }, [removeProduct, deleteId, fetchProducts]);
 
   useEffect(() => {
     fetchProducts();
@@ -88,7 +101,13 @@ const handleDelete = async () => {
               </tr>
             </thead>
             <tbody>
-              {loading ? (
+              {error ? (
+                <tr>
+                  <td colSpan={9} style={{ color: "red", textAlign: "center" }}>
+                    Xəta: {error}
+                  </td>
+                </tr>
+              ) : loading ? (
                 <tr>
                   <td colSpan={9}>
                     <Loading />

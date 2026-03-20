@@ -24,6 +24,34 @@ export interface ProductPayload {
   type?: string;
 }
 
+const VALID_PRODUCT_TYPES = new Set([
+  "kg",
+  "gr",
+  "litre",
+  "ml",
+  "meter",
+  "cm",
+  "mm",
+  "piece",
+  "packet",
+]);
+
+const toBackendPayload = (payload: Partial<ProductPayload>) => {
+  const mappedType =
+    typeof payload.type === "string" && VALID_PRODUCT_TYPES.has(payload.type)
+      ? payload.type
+      : "piece";
+
+  return {
+    ...(payload.name !== undefined ? { title: payload.name } : {}),
+    ...(payload.description !== undefined ? { description: payload.description } : {}),
+    ...(payload.price !== undefined ? { price: String(payload.price) } : {}),
+    ...(payload.category_id !== undefined ? { category_id: payload.category_id } : {}),
+    ...(payload.img_url !== undefined ? { img_url: payload.img_url } : {}),
+    type: mappedType,
+  };
+};
+
 export const getProducts = async (): Promise<Product[]> => {
   try {
     const res = await axiosInstance.get("admin/products");
@@ -37,8 +65,7 @@ export const getProducts = async (): Promise<Product[]> => {
 
 export const createProduct = async (payload: ProductPayload): Promise<Product> => {
   try {
-    console.log("► createProduct request:", payload);
-    const res = await axiosInstance.post("admin/products", payload);
+    const res = await axiosInstance.post("admin/product", toBackendPayload(payload));
     console.log("✓ createProduct success:", res.data);
     return res.data;
   } catch (err) {
@@ -52,8 +79,7 @@ export const updateProduct = async (
   payload: Partial<ProductPayload>
 ): Promise<Product> => {
   try {
-    console.log(`► updateProduct ${id} request:`, payload);
-    const res = await axiosInstance.put(`admin/products/${id}`, payload);
+    const res = await axiosInstance.put(`admin/products/${id}`, toBackendPayload(payload));
     console.log(`✓ updateProduct ${id} success:`, res.data);
     return res.data;
   } catch (err) {
@@ -64,9 +90,8 @@ export const updateProduct = async (
 
 export const deleteProduct = async (id: number): Promise<void> => {
   try {
-    console.log(`► deleteProduct ${id} request`);
-    await axiosInstance.delete(`admin/products/${id}`);
-    console.log(`✓ deleteProduct ${id} success`);
+   const res = await axiosInstance.delete(`admin/products/${id}`);
+    return res.data;
   } catch (err) {
     console.error(`✗ deleteProduct ${id} error:`, err instanceof Error ? err.message : err);
     throw err;

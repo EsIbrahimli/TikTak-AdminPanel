@@ -1,8 +1,8 @@
 
 import axios from "axios"
 
- export const axiosInstance = axios.create({
-  baseURL: "https://api.sarkhanrahimli.dev/api/tiktak", 
+export const axiosInstance = axios.create({
+  baseURL: "https://api.sarkhanrahimli.dev/api/tiktak",
   headers: {
     "Content-Type": "application/json"
   }
@@ -18,3 +18,14 @@ axiosInstance.interceptors.request.use((config) => {
 
   return config
 })
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token")
+      window.location.href = "/login"
+    }
+    return Promise.reject(error)
+  }
+)
