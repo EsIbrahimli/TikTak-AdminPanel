@@ -1,45 +1,104 @@
 import { useEffect, useState } from "react";
 import { useProductsStore } from "../../common/store/useProductStore";
 import { useCategoriesStore } from "../../common/store/useCategoriesStore";
-import ConfirmDeleteModal from "../../common/components/ConfirmDeleteModal";
+import type { ProductPayload } from "../../services/productsApi";
 import Layout from "../../common/components/Layout/Layout";
 import Button from "../../common/components/Button/Button";
 import Pagination from "../../common/components/Pagination/Pagination";
 import Loading from "../../common/components/Loading/Loading";
+import ProductFormModal from "./components/ProductFormModal";
+import DeleteProductModal from "./components/DeleteProductModal";
 import styles from "./products.module.css";
 
 export default function Products() {
-  const { products, fetchProducts, removeProduct, loading } = useProductsStore();
+  const {
+    products,
+    fetchProducts,
+    addProduct,
+    editProduct,
+    removeProduct,
+    loading,
+  } = useProductsStore();
   const { categories, fetchCategories } = useCategoriesStore();
 
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [editingProductId, setEditingProductId] = useState<number | null>(null);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
   const itemsPerPage = 5;
+  const safeProducts = Array.isArray(products) ? products : [];
 
-  const totalItems = products.length;
+  const totalItems = safeProducts.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
-  const startIndex = (currentPage - 1) * itemsPerPage;
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const startIndex = (safeCurrentPage - 1) * itemsPerPage;
 
-  const paginatedProducts = products.slice(
+  const paginatedProducts = safeProducts.slice(
     startIndex,
     startIndex + itemsPerPage
   );
+  const safeCategories = Array.isArray(categories) ? categories : [];
+  const editingProduct =
+    editingProductId === null
+      ? null
+      : safeProducts.find((product) => product.id === editingProductId) ?? null;
+  const deletingProduct =
+    deleteId === null
+      ? null
+      : safeProducts.find((product) => product.id === deleteId) ?? null;
+
+  const formatPrice = (price: number | string | null | undefined) => {
+    const parsed = typeof price === "number" ? price : Number(price);
+    return Number.isFinite(parsed) ? parsed.toFixed(2) : "0.00";
+  };
 
   const getCategoryName = (id: number) => {
-    return categories.find((c) => c.id === id)?.name || "-";
+    return safeCategories.find((c) => c.id === id)?.name || "-";
+  };
+
+  const handleCreate = async (payload: ProductPayload) => {
+    const normalizedPayload: ProductPayload = {
+      ...payload,
+      ...(payload.img_url ? { img_url: payload.img_url } : {}),
+      ...(payload.type ? { type: payload.type } : {}),
+    };
+
+    await addProduct(normalizedPayload);
+    await fetchProducts();
+    setIsCreateOpen(false);
+  };
+
+  const handleEdit = async (payload: ProductPayload) => {
+    if (editingProductId === null) {
+      return;
+    }
+
+    const normalizedPayload: ProductPayload = {
+      ...payload,
+      ...(payload.img_url ? { img_url: payload.img_url } : {}),
+      ...(payload.type ? { type: payload.type } : {}),
+    };
+
+    await editProduct(editingProductId, normalizedPayload);
+    await fetchProducts();
+    setEditingProductId(null);
+  };
+
+  const handleDelete = async () => {
+    if (deleteId === null) {
+      return;
+    }
+
+    await removeProduct(deleteId);
+    await fetchProducts();
+    setDeleteId(null);
   };
 
   useEffect(() => {
     fetchProducts();
     fetchCategories();
-  }, []);
-
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
-    }
-  }, [currentPage, totalPages]);
+  }, [fetchProducts, fetchCategories]);
 
   return (
     <Layout>
@@ -47,7 +106,7 @@ export default function Products() {
         <div className={styles.header}>
           <h2 className={styles.title}>Məhsullar</h2>
 
-          <Button size="small">
+          <Button size="small" onClick={() => setIsCreateOpen(true)}>
             + Yeni Məhsul
           </Button>
         </div>
@@ -75,7 +134,7 @@ export default function Products() {
                     <Loading />
                   </td>
                 </tr>
-              ) : products.length === 0 ? (
+              ) : safeProducts.length === 0 ? (
                 <tr>
                   <td colSpan={9}>Məhsul tapılmadı.</td>
                 </tr>
@@ -97,7 +156,7 @@ export default function Products() {
                       {product.description}
                     </td>
 
-                    <td>{product.price.toFixed(2)} ₼</td>
+                    <td>{formatPrice(product.price)} ₼</td>
 
                     <td>{getCategoryName(product.category_id)}</td>
 
@@ -112,7 +171,12 @@ export default function Products() {
                     </td>
 
                     <td className={styles.buttons}>
-                      <button className={styles.edit}>Düzəlt</button>
+                      <button
+                        className={styles.edit}
+                        onClick={() => setEditingProductId(product.id)}
+                      >
+                        Düzəlt
+                      </button>
 
                       <button
                         className={styles.delete}
@@ -130,7 +194,7 @@ export default function Products() {
 
         <div className={styles.paginationRow}>
           <Pagination
-            currentPage={currentPage}
+            currentPage={safeCurrentPage}
             totalItems={totalItems}
             itemsPerPage={itemsPerPage}
             onPageChange={setCurrentPage}
@@ -138,12 +202,39 @@ export default function Products() {
         </div>
       </div>
 
-      {deleteId !== null && (
-        <ConfirmDeleteModal
-          onConfirm={async () => {
-            await removeProduct(deleteId);
-            setDeleteId(null);
-          }}
+      {isCreateOpen && (
+        <ProductFormModal
+          key="create-product"
+          isOpen={true}
+          title="Yeni məhsul"
+          submitLabel="Yarat"
+          categories={safeCategories}
+          isSubmitting={loading}
+          onClose={() => setIsCreateOpen(false)}
+          onSubmit={handleCreate}
+        />
+      )}
+
+      {editingProduct !== null && (
+        <ProductFormModal
+          key={`edit-product-${editingProduct.id}`}
+          isOpen={true}
+          title="Məhsulu düzəlt"
+          submitLabel="Yadda saxla"
+          categories={safeCategories}
+          initialValues={editingProduct}
+          isSubmitting={loading}
+          onClose={() => setEditingProductId(null)}
+          onSubmit={handleEdit}
+        />
+      )}
+
+      {deletingProduct !== null && (
+        <DeleteProductModal
+          isOpen={true}
+          productName={deletingProduct.name}
+          isSubmitting={loading}
+          onConfirm={handleDelete}
           onCancel={() => setDeleteId(null)}
         />
       )}

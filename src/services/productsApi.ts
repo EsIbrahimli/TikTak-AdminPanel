@@ -26,7 +26,7 @@ export const getProducts = async (): Promise<Product[]> => {
 };
 
 export const createProduct = async (payload: ProductPayload): Promise<Product> => {
-  const res = await axiosInstance.post("admin/products", payload);
+  const res = await axiosInstance.post("admin/product", payload);
   return res.data;
 };
 
