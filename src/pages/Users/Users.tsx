@@ -1,38 +1,39 @@
 
 import Layout from '../../common/components/Layout/Layout'
-import React from 'react'
 import styles from './Users.module.css'
 import Pagination from '../../common/components/Pagination/Pagination'
-import UsersModal from './UsersModal'
-import {getUsers}  from '../../services/usersApi'
+import UsersModal from './components/UsersModal'
 import { useState, useEffect } from 'react'
+import Loading from '../../common/components/Loading/Loading'
 import { useUserStore } from '../../common/store/useUserStore'
+
+interface UserItem {
+  id: number;
+  full_name: string;
+  phone: string;
+  address?: string;
+  role: string;
+  img_url?: string;
+}
+
 const Users = () => {
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [selectedUser, setSelectedUser] = React.useState(null);
-  const [users,setUsers] = useState([]);
+  const { users, loading, error, fetchUsers } = useUserStore();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<UserItem | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 const itemsPerPage = 5;
+const safeUsers = Array.isArray(users) ? (users as UserItem[]) : [];
 
 // pagination logic
 const startIndex = (currentPage - 1) * itemsPerPage;
-const paginatedData = users.slice(startIndex, startIndex + itemsPerPage);
+const paginatedData = safeUsers.slice(startIndex, startIndex + itemsPerPage);
 useEffect(() => {
   setCurrentPage(1);
-}, [users]);
-useEffect(()=>{
+}, [safeUsers.length]);
 
-const fetchUsers = async ()=>{
-
-const data = await getUsers();
-
-setUsers(data);
-
-};
-
-fetchUsers();
-
-},[]);
+useEffect(() => {
+  fetchUsers();
+}, [fetchUsers]);
 
   return (
     <Layout>
@@ -55,7 +56,25 @@ fetchUsers();
 </thead>
 
 <tbody>
-{paginatedData.map((user, index)=>(
+{loading ? (
+  <tr>
+    <td colSpan={7} className={styles.stateRow}>
+      <Loading />
+    </td>
+  </tr>
+) : error ? (
+  <tr>
+    <td colSpan={7} className={`${styles.stateRow} ${styles.errorText}`}>
+      {error}
+    </td>
+  </tr>
+) : paginatedData.length === 0 ? (
+  <tr>
+    <td colSpan={7} className={styles.stateRow}>
+      İstifadəçi tapılmadı.
+    </td>
+  </tr>
+) : paginatedData.map((user, index)=>(
 <tr key={user.id}>
 <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
 
@@ -93,12 +112,15 @@ fetchUsers();
 </table>
 <Pagination 
 currentPage={currentPage}
-  totalItems={users.length}
+  totalItems={safeUsers.length}
   itemsPerPage={itemsPerPage}
   onPageChange={setCurrentPage}/>
 <UsersModal
   isOpen={isModalOpen}
-  onClose={() => setIsModalOpen(false)}
+  onClose={() => {
+    setIsModalOpen(false)
+    setSelectedUser(null)
+  }}
   user={selectedUser}
 />
 

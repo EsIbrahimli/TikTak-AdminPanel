@@ -10,154 +10,152 @@ import type { Product, ProductPayload } from "../../services/productsApi";
 interface ProductsState {
   products: Product[];
   loading: boolean;
+  error: string | null;
   fetchProducts: () => Promise<void>;
-  addProduct: (payload: ProductPayload) => Promise<void>;
-  editProduct: (id: number, payload: Partial<ProductPayload>) => Promise<void>;
-  removeProduct: (id: number) => Promise<void>;
+  addProduct: (payload: ProductPayload) => Promise<boolean>;
+  editProduct: (id: number, payload: Partial<ProductPayload>) => Promise<boolean>;
+  removeProduct: (id: number) => Promise<boolean>;
 }
 
-type ProductsApiResponse =
-  | Product[]
-  | {
-      data?: Product[] | { data?: Product[]; products?: Product[] };
-      products?: Product[];
-    };
-
-type ProductApiResponse = unknown;
-
-const normalizeProducts = (payload: ProductsApiResponse): Product[] => {
-  if (Array.isArray(payload)) {
-    return payload;
+const toNum = (val: unknown): number | null => {
+  if (typeof val === "number" && Number.isFinite(val)) return val;
+  if (typeof val === "string" && val.trim()) {
+    const parsed = Number(val);
+    return Number.isFinite(parsed) ? parsed : null;
   }
-
-  if (Array.isArray(payload?.data)) {
-    return payload.data;
-  }
-
-  if (Array.isArray(payload?.products)) {
-    return payload.products;
-  }
-
-  if (payload?.data && typeof payload.data === "object") {
-    if (Array.isArray(payload.data.data)) {
-      return payload.data.data;
-    }
-
-    if (Array.isArray(payload.data.products)) {
-      return payload.data.products;
-    }
-  }
-
-  return [];
+  return null;
 };
 
-const normalizeProduct = (payload: ProductApiResponse): Product | null => {
-  const asRecord = (value: unknown): Record<string, unknown> | null => {
-    return value && typeof value === "object"
-      ? (value as Record<string, unknown>)
-      : null;
+const normalizeSingleProduct = (obj: unknown): Product | null => {
+  if (!obj || typeof obj !== "object") return null;
+  
+  const data = obj as Record<string, unknown>;
+  const id = toNum(data.id);
+  
+  if (id === null) return null;
+
+  const categoryId =
+    toNum(data.category_id) ??
+    toNum((data.category as any)?.id) ??
+    null;
+
+  return {
+    ...(data as unknown as Product),
+    id,
+    category_id: categoryId,
   };
+};
 
-  const asProduct = (value: unknown): Product | null => {
-    const record = asRecord(value);
-    if (!record) {
-      return null;
-    }
+const normalizeProducts = (data: unknown): Product[] => {
+  const list = Array.isArray(data)
+    ? data
+    : Array.isArray((data as any)?.data)
+    ? (data as any).data
+    : Array.isArray((data as any)?.products)
+    ? (data as any).products
+    : Array.isArray((data as any)?.data?.data)
+    ? (data as any).data.data
+    : [];
 
-    return typeof record.id === "number"
-      ? (record as unknown as Product)
-      : null;
-  };
+  return list
+    .map((item) => normalizeSingleProduct(item))
+    .filter((item): item is Product => item !== null);
+};
 
-  const direct = asProduct(payload);
-  if (direct) {
-    return direct;
+const normalizeProduct = (data: unknown): Product | null => {
+  let result = normalizeSingleProduct(data);
+  if (result) return result;
+
+  const obj = (data as Record<string, unknown>) ?? {};
+  result = normalizeSingleProduct(obj.data);
+  if (result) return result;
+
+  result = normalizeSingleProduct((obj.data as any)?.data);
+  if (result) return result;
+
+  result = normalizeSingleProduct((obj.data as any)?.product);
+  if (result) return result;
+
+  result = normalizeSingleProduct(obj.product);
+  if (result) return result;
+
+  if (Array.isArray(obj.products) && obj.products.length > 0) {
+    result = normalizeSingleProduct(obj.products[0]);
+    if (result) return result;
   }
 
-  const payloadRecord = asRecord(payload);
-  if (!payloadRecord) {
-    return null;
-  }
-
-  const fromData = asProduct(payloadRecord.data);
-  if (fromData) {
-    return fromData;
-  }
-
-  const nestedDataRecord = asRecord(payloadRecord.data);
-  const fromNestedData = asProduct(nestedDataRecord?.data);
-  if (fromNestedData) {
-    return fromNestedData;
-  }
-
-  const fromNestedProduct = asProduct(nestedDataRecord?.product);
-  if (fromNestedProduct) {
-    return fromNestedProduct;
-  }
-
-  return asProduct(payloadRecord.product);
+  return null;
 };
 
 export const useProductsStore = create<ProductsState>((set) => ({
   products: [],
   loading: false,
+  error: null,
 
   fetchProducts: async () => {
-    set({ loading: true });
+    set({ loading: true, error: null });
     try {
       const data = await getProducts();
-      const normalizedProducts = normalizeProducts(data as ProductsApiResponse);
-      set({ products: normalizedProducts });
+      set({ products: normalizeProducts(data), error: null });
+    } catch (err: unknown) {
+      set({ error: err instanceof Error ? err.message : "Xəta" });
     } finally {
       set({ loading: false });
     }
   },
 
   addProduct: async (payload) => {
-    set({ loading: true });
+    set({ loading: true, error: null });
     try {
-      const newProduct = await createProduct(payload);
-      const normalizedProduct = normalizeProduct(newProduct as ProductApiResponse);
-
-      if (!normalizedProduct) {
-        return;
-      }
+      const res = await createProduct(payload);
+      const normalized = normalizeProduct(res);
+      if (!normalized) throw new Error("Invalid response");
 
       set((state) => ({
-        products: [normalizedProduct, ...state.products],
+        products: [normalized, ...state.products],
+        error: null,
       }));
+      return true;
+    } catch (err) {
+      set({ error: err instanceof Error ? err.message : "Xəta" });
+        return false;
     } finally {
       set({ loading: false });
     }
   },
 
   editProduct: async (id, payload) => {
-    set({ loading: true });
+    set({ loading: true, error: null });
     try {
-      const updated = await updateProduct(id, payload);
-      const normalizedProduct = normalizeProduct(updated as ProductApiResponse);
-
-      if (!normalizedProduct) {
-        return;
-      }
+      const res = await updateProduct(id, payload);
+      const normalized = normalizeProduct(res);
+      if (!normalized) throw new Error("Invalid response");
 
       set((state) => ({
-        products: state.products.map((p) =>
-          p.id === id ? normalizedProduct : p
-        ),
+        products: state.products.map((p) => (p.id === id ? normalized : p)),
+        error: null,
       }));
+      return true;
+    } catch (err) {
+      set({ error: err instanceof Error ? err.message : "Xəta" });
+        return false;
     } finally {
       set({ loading: false });
     }
   },
 
   removeProduct: async (id) => {
-    set({ loading: true });
+    set({ loading: true, error: null });
     try {
       await deleteProduct(id);
       set((state) => ({
         products: state.products.filter((p) => p.id !== id),
+        error: null,
       }));
+      return true;
+    } catch (err) {
+      set({ error: err instanceof Error ? err.message : "Xəta" });
+      return false;
     } finally {
       set({ loading: false });
     }

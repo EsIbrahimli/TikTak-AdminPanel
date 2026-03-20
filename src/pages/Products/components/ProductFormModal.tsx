@@ -24,18 +24,27 @@ interface ProductSubmitPayload {
   type?: string;
 }
 
+interface ProductInitialValues {
+  name?: string;
+  description?: string;
+  price?: number | string | null;
+  img_url?: string;
+  category_id?: number | string | null;
+  type?: string;
+}
+
 interface Props {
   isOpen: boolean;
   title: string;
   submitLabel: string;
   categories: CategoryOption[];
-  initialValues?: Partial<ProductSubmitPayload>;
+  initialValues?: ProductInitialValues;
   isSubmitting?: boolean;
   onClose: () => void;
   onSubmit: (values: ProductSubmitPayload) => Promise<void> | void;
 }
 
-const getInitialValues = (initialValues?: Partial<ProductSubmitPayload>): ProductFormValues => ({
+const getInitialValues = (initialValues?: ProductInitialValues): ProductFormValues => ({
   name: initialValues?.name ?? "",
   description: initialValues?.description ?? "",
   price:
@@ -44,7 +53,8 @@ const getInitialValues = (initialValues?: Partial<ProductSubmitPayload>): Produc
       : "",
   img_url: initialValues?.img_url ?? "",
   category_id:
-    typeof initialValues?.category_id === "number"
+    typeof initialValues?.category_id === "number" ||
+    typeof initialValues?.category_id === "string"
       ? String(initialValues.category_id)
       : "",
   type: initialValues?.type ?? "",

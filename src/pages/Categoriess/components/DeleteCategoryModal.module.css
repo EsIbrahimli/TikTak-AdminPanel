@@ -24,6 +24,13 @@
   color: #111827;
 }
 
+.icon {
+  width: 200px;
+  height: 200px;
+  display: block;
+  margin: 0 auto 12px;
+}
+
 .text {
   margin: 0;
   color: #4b5563;

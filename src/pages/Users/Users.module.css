@@ -6,7 +6,7 @@
 }
 
 .title {
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 600;
   margin-bottom: 20px;
 }
@@ -28,32 +28,34 @@
   padding: 14px 12px;
   border-bottom: 1px solid #eee;
   font-size: 14px;
+  font-weight: 400;
 }
 
 .avatar {
   width: 35px;
   height: 35px;
   border-radius: 50%;
-  background: #2ecc71;
+  background: #5fc232;
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
+  font-weight: 500;
   object-fit: cover;
 }
 
 .address {
   color: #999;
+  font-weight: 400;
 }
 
 .role {
-  border: 1px solid #2ecc71;
-  color: #2ecc71;
+  border: 1px solid #5fc232;
+  color: #5fc232;
   padding: 4px 12px;
   border-radius: 6px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .actionBtn {
@@ -65,5 +67,15 @@
 }
 
 .actionBtn:hover {
-  color: #2ecc71;
+  color: #5fc232;
+}
+
+.stateRow {
+  text-align: center;
+  color: #6b7280;
+  padding: 20px 12px;
+}
+
+.errorText {
+  color: #dc2626;
 }

@@ -3,10 +3,11 @@ import { getUsers } from "../../services/usersApi";
 
 interface User {
   id: number;
-  name: string;
-  email: string;
+  full_name: string;
+  phone: string;
+  address?: string;
+  img_url?: string;
   role: string;
-  status: string;
 }
 
 interface UserStore {
@@ -15,8 +16,7 @@ interface UserStore {
   error: string | null;
   totalUsers: number;
   
-  // Funksiya API çağırışı üçün
-  getUsers: () => Promise<void>;
+  fetchUsers: () => Promise<void>;
 }
 
 export const useUserStore = create<UserStore>((set) => ({
@@ -25,17 +25,20 @@ export const useUserStore = create<UserStore>((set) => ({
   error: null,
   totalUsers: 0,
 
-  getUsers: async () => {
+  fetchUsers: async () => {
     set({ loading: true, error: null });
     try {
-      const data = await fetchUsers(); // API çağırışı
+      const data = await getUsers();
+      const normalizedUsers = Array.isArray(data) ? data : [];
+
       set({ 
-        users: data, 
-        totalUsers: data.length, 
+        users: normalizedUsers, 
+        totalUsers: normalizedUsers.length, 
         loading: false 
       });
-    } catch (err: any) {
-      set({ error: err.message, loading: false });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'İstifadəçilər yüklənmədi';
+      set({ error: message, loading: false });
     }
   },
 }));

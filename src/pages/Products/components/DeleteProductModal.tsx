@@ -1,4 +1,5 @@
 import styles from "./DeleteProductModal.module.css";
+import deleteIcon from "../../../assets/icons/deleteIcon.svg";
 
 interface Props {
   isOpen: boolean;
@@ -23,6 +24,7 @@ export default function DeleteProductModal({
     <div className={styles.overlay} onClick={onCancel}>
       <div className={styles.modal} onClick={(event) => event.stopPropagation()}>
         <h3 className={styles.title}>Məhsul silinsin?</h3>
+        <img className={styles.icon} src={deleteIcon} alt="Delete icon" />
         <p className={styles.text}>
           {productName ? `"${productName}" məhsulu silinəcək.` : "Bu məhsul silinəcək."}
         </p>

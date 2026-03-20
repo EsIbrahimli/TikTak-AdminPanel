@@ -1,4 +1,5 @@
 import styles from "./DeleteCategoryModal.module.css";
+import deleteIcon from "../../../assets/icons/deleteIcon.svg";
 
 interface Props {
   isOpen: boolean;
@@ -23,6 +24,7 @@ export default function DeleteCategoryModal({
     <div className={styles.overlay} onClick={onCancel}>
       <div className={styles.modal} onClick={(event) => event.stopPropagation()}>
         <h3 className={styles.title}>Kateqoriya silinsin?</h3>
+        <img className={styles.icon} src={deleteIcon} alt="Delete icon" />
         <p className={styles.text}>
           {categoryName
             ? `"${categoryName}" kateqoriyası silinəcək.`
