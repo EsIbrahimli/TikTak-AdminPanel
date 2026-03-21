@@ -15,6 +15,8 @@ import Pagination from "../../common/components/Pagination/Pagination";
 import OrderModal from "./components/OrderModal/OrderModal";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../common/constant/router";
+import { toast } from "react-toastify";
+import Loading from "../../common/components/Loading/Loading";
 
 
 const Orders = () => {
@@ -37,6 +39,13 @@ const Orders = () => {
 
     void getOrdersAndStats();
   }, [token, navigate, getOrdersAndStats]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(`Sifarişlər yüklənmədi: ${error}`);
+    }
+  }, [error]);
+
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
 
@@ -45,7 +54,13 @@ const Orders = () => {
 
   if (!token) return null;
 
-  if (loading) return <p>Yüklənir...</p>;
+  if (loading) {
+    return (
+      <Layout>
+        <Loading />
+      </Layout>
+    );
+  }
   if (error) return <p>Xəta: {error}</p>;
 
   return (

@@ -8,6 +8,7 @@ import Pagination from "../../common/components/Pagination/Pagination";
 import Loading from "../../common/components/Loading/Loading";
 import CategoryFormModal from "./components/CategoryFormModal";
 import DeleteCategoryModal from "./components/DeleteCategoryModal";
+import { toast } from "react-toastify";
 
 
 export default function Categories() {
@@ -48,8 +49,13 @@ export default function Categories() {
       ...restPayload,
       ...(img_url ? { img_url } : {}),
     };
-    await addCategory(normalizedPayload);
-    setIsCreateOpen(false);
+    try {
+      await addCategory(normalizedPayload);
+      setIsCreateOpen(false);
+      toast.success("Kateqoriya uğurla yaradıldı.");
+    } catch {
+      toast.error("Kateqoriya yaradılarkən xəta baş verdi.");
+    }
   };
 
   const handleEdit = async (payload: CategoryPayload) => {
@@ -63,8 +69,13 @@ export default function Categories() {
       ...(img_url ? { img_url } : {}),
     };
 
-    await editCategory(editingCategoryId, normalizedPayload);
-    setEditingCategoryId(null);
+    try {
+      await editCategory(editingCategoryId, normalizedPayload);
+      setEditingCategoryId(null);
+      toast.success("Kateqoriya uğurla yeniləndi.");
+    } catch {
+      toast.error("Kateqoriya yenilənərkən xəta baş verdi.");
+    }
   };
 
   const handleDelete = async () => {
@@ -72,8 +83,13 @@ export default function Categories() {
       return;
     }
 
-    await removeCategory(deleteId);
-    setDeleteId(null);
+    try {
+      await removeCategory(deleteId);
+      setDeleteId(null);
+      toast.success("Kateqoriya uğurla silindi.");
+    } catch {
+      toast.error("Kateqoriya silinərkən xəta baş verdi.");
+    }
   };
 
   useEffect(() => {

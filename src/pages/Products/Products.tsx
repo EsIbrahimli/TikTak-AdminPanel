@@ -9,6 +9,7 @@ import Loading from "../../common/components/Loading/Loading";
 import ProductFormModal from "./components/ProductFormModal";
 import DeleteProductModal from "./components/DeleteProductModal";
 import styles from "./Products.module.css";
+import { toast } from "react-toastify";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -48,7 +49,10 @@ export default function Products() {
     if (success) {
       setIsCreateOpen(false);
       fetchProducts();
+      toast.success("Məhsul uğurla yaradıldı.");
+      return;
     }
+    toast.error("Məhsul yaradılarkən xəta baş verdi.");
   }, [addProduct, fetchProducts]);
 
   const handleEdit = useCallback(async (payload: ProductPayload) => {
@@ -57,7 +61,10 @@ export default function Products() {
     if (success) {
       setEditingId(null);
       fetchProducts();
+      toast.success("Məhsul uğurla yeniləndi.");
+      return;
     }
+    toast.error("Məhsul yenilənərkən xəta baş verdi.");
   }, [editProduct, editingId, fetchProducts]);
 
   const handleDelete = useCallback(async () => {
@@ -66,7 +73,10 @@ export default function Products() {
     if (success) {
       setDeleteId(null);
       fetchProducts();
+      toast.success("Məhsul uğurla silindi.");
+      return;
     }
+    toast.error("Məhsul silinərkən xəta baş verdi.");
   }, [removeProduct, deleteId, fetchProducts]);
 
   useEffect(() => {

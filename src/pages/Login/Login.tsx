@@ -6,6 +6,7 @@ import Button from '../../common/components/Button/Button'
 import Loading from '../../common/components/Loading/Loading'
 import { useAuthStore } from '../../common/store/useAuthStore'
 import { ROUTES } from '../../common/constant/router'
+import { toast } from 'react-toastify'
 
 const Login = () => {
   const navigate = useNavigate()
@@ -32,16 +33,19 @@ const Login = () => {
   const handleLoginClick = async () => {
     if (!phone || !password) {
       setError(true)
+      toast.error('Telefon və parol daxil edin.')
       return
     }
 
     try {
       await login(phone, password);
+      toast.success('Giriş uğurla tamamlandı.');
        navigate(ROUTES.ORDERS);
   
     } catch (err: unknown) {
       console.error(err)
       setError(true)
+      toast.error('Giriş zamanı xəta baş verdi.')
     }
   }
 

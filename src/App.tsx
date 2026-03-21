@@ -2,6 +2,8 @@
 import { Routes,Route } from 'react-router-dom'
 import { ROUTES } from './common/constant/router'
 import { Suspense,lazy } from 'react'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import './App.css'
 
 // lazy-loaded page components
@@ -17,17 +19,30 @@ const Logout = lazy(() => import('./pages/Logout/Logout'))
 function App() {
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <Routes>
-        <Route path={ROUTES.LOGIN} element={<Login />} />
-        <Route path={ROUTES.ORDERS} element={<Orders />} />
-        <Route path={ROUTES.CAMPAIGNS} element={<Campaigns />} />
-        <Route path={ROUTES.CATEGORIES} element={<Categories />} />
-        <Route path={ROUTES.PRODUCTS} element={<Products />} />
-        <Route path={ROUTES.USERS} element={<Users />} />
-        <Route path={ROUTES.LOGOUT} element={<Logout />} />
-      </Routes>
-    </Suspense>
+    <>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          <Route path={ROUTES.LOGIN} element={<Login />} />
+          <Route path={ROUTES.ORDERS} element={<Orders />} />
+          <Route path={ROUTES.CAMPAIGNS} element={<Campaigns />} />
+          <Route path={ROUTES.CATEGORIES} element={<Categories />} />
+          <Route path={ROUTES.PRODUCTS} element={<Products />} />
+          <Route path={ROUTES.USERS} element={<Users />} />
+          <Route path={ROUTES.LOGOUT} element={<Logout />} />
+        </Routes>
+      </Suspense>
+
+      <ToastContainer
+        position="top-right"
+        autoClose={2500}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+    </>
   )
 }
 

@@ -6,6 +6,7 @@ import UsersModal from './components/UsersModal'
 import { useState, useEffect } from 'react'
 import Loading from '../../common/components/Loading/Loading'
 import { useUserStore } from '../../common/store/useUserStore'
+import { toast } from 'react-toastify'
 
 interface UserItem {
   id: number;
@@ -34,6 +35,12 @@ useEffect(() => {
 useEffect(() => {
   fetchUsers();
 }, [fetchUsers]);
+
+useEffect(() => {
+  if (error) {
+    toast.error(`İstifadəçilər yüklənmədi: ${error}`)
+  }
+}, [error])
 
   return (
     <Layout>
