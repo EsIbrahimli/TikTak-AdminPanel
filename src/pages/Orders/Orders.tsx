@@ -42,7 +42,7 @@ const Orders = () => {
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
 
   const safeOrders = Array.isArray(orders) ? orders : [];
-  const currentOrders = safeOrders.slice(indexOfFirstOrder, indexOfLastOrder);
+
 
   if (!token) return null;
 
@@ -57,6 +57,42 @@ const Orders = () => {
 const handleSort = (key, direction) => {
   setSortConfig({ key, direction });
 };
+const sortedOrders = [...safeOrders].sort((a, b) => {
+  if (!sortConfig.key) return 0;
+
+  let aValue;
+  let bValue;
+
+  switch (sortConfig.key) {
+    case "orderNumber":
+      aValue = a.orderNumber;
+      bValue = b.orderNumber;
+      break;
+    case "createdAt":
+      aValue = new Date(a.createdAt);
+      bValue = new Date(b.createdAt);
+      break;
+    case "address":
+      aValue = a.address;
+      bValue = b.address;
+      break;
+    case "itemCount":
+      aValue = a.items.reduce((sum, i) => sum + i.quantity, 0);
+      bValue = b.items.reduce((sum, i) => sum + i.quantity, 0);
+      break;
+    case "total":
+      aValue = a.total;
+      bValue = b.total;
+      break;
+    default:
+      return 0;
+  }
+
+  if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
+  if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
+  return 0;
+});
+const currentOrders = sortedOrders.slice(indexOfFirstOrder, indexOfLastOrder);
 // 1. sort edilmiş sifarişlər
 
 
@@ -107,18 +143,54 @@ const handleSort = (key, direction) => {
           <thead>
             <tr>
 
-              <th>No<FaSort className={styles.sort} size={12} />
+              <th>No<FaSort className={styles.sort} size={12} 
+            
+              onClick={() =>
+      handleSort(
+        "orderNumber",
+        sortConfig.direction === "asc" ? "desc" : "asc"
+      )
+    }
+     style={{
+        color: sortConfig.key === "orderNumber" ? "blue" : "gray"
+   
+  }} />
                 <AiFillFilter className={styles.filter} size={12} /></th>
  
-              <th>Tarix<FaSort className={styles.sort} size={12} />
+              <th>Tarix<FaSort className={styles.sort} size={12}   onClick={() =>
+      handleSort(
+        "createdAt",
+        sortConfig.direction === "asc" ? "desc" : "asc"
+      )
+    } />
                 <AiFillFilter className={styles.filter} size={12} /></th>
-              <th>Çatdırılma ünvanı<FaSort className={styles.sort} size={12} />
+              <th>Çatdırılma ünvanı<FaSort className={styles.sort} size={12}   onClick={() =>
+      handleSort(
+        "address",
+        sortConfig.direction === "asc" ? "desc" : "asc"
+      )
+    } />
                 <AiFillFilter className={styles.filter} size={12} /></th>
-              <th>Məhsul sayı<FaSort className={styles.sort} size={12} />
+              <th>Məhsul sayı<FaSort className={styles.sort} size={12}   onClick={() =>
+      handleSort(
+        "itemCount",
+        sortConfig.direction === "asc" ? "desc" : "asc"
+      )
+    } />
                 <AiFillFilter className={styles.filter} size={12} /></th>
-              <th>Subtotal<FaSort className={styles.sort} size={12} />
+              <th>Subtotal<FaSort className={styles.sort} size={12}   onClick={() =>
+      handleSort(
+        "total",
+        sortConfig.direction === "asc" ? "desc" : "asc"
+      )
+    } m/>
                 <AiFillFilter className={styles.filter} size={12} /></th>
-              <th>Status<FaSort className={styles.sort} size={12} />
+              <th>Status<FaSort className={styles.sort} size={12}   onClick={() =>
+      handleSort(
+        "status",
+        sortConfig.direction === "asc" ? "desc" : "asc"
+      )
+    } />
                 <AiFillFilter className={styles.filter} size={12} /></th>
               <th>Əməliyyat</th>
             </tr>
