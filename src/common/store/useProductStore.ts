@@ -47,7 +47,7 @@ const toProductList = (data: unknown): Product[] => {
     Array.isArray((data as any)?.products) ? (data as any).products :
     Array.isArray((data as any)?.data?.data) ? (data as any).data.data :
     [];
-  return list.map(toProduct).filter((p): p is Product => p !== null);
+  return list.map(toProduct).filter((p: Product | null): p is Product => p !== null);
 };
 
 const toSingleProduct = (data: unknown): Product | null =>

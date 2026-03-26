@@ -1,7 +1,7 @@
 import Header from '../Header/Header'
 import SideBar from '../SideBar/SideBar'
 import styles from './Layout.module.css'
-import { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
 interface LayoutProps {
   children?: ReactNode

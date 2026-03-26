@@ -1,5 +1,5 @@
 import styles from './UsersModal.module.css'
-import { FiUser, FiPhone, FiMapPin, FiShield, FiX } from 'react-icons/fi'
+import { FiUser, FiPhone, FiMapPin, FiShield } from 'react-icons/fi'
 
 interface UserModalData {
   id: number;

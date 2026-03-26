@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useOrderStore } from "../../common/store/useOrderStore";
+import { type Order } from "../../common/store/useOrderStore";
 import { useAuthStore } from "../../common/store/useAuthStore";
 import { FaSort } from "react-icons/fa";
 import { AiFillFilter } from "react-icons/ai";
@@ -24,9 +25,9 @@ const Orders = () => {
   const token = useAuthStore((state) => state.token);
 
   const [openModal, setOpenModal] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: null }); // direction: "asc" | "desc" | null
+  const [sortConfig, setSortConfig] = useState<{ key: string | null; direction: "asc" | "desc" | null }>({ key: null, direction: null });
   const ordersPerPage = 5;
 
   const { orders, totalSales, totalOrders, pending, preparing, delivered, canceled, getOrdersAndStats, loading, error } =
@@ -69,7 +70,7 @@ const Orders = () => {
   DELIVERED: "Çatdırılıb",
   CANCELED: "Ləğv edilib"
 };
-const handleSort = (key, direction) => {
+const handleSort = (key: string, direction: "asc" | "desc") => {
   setSortConfig({ key, direction });
 };
 const sortedOrders = [...safeOrders].sort((a, b) => {
@@ -198,7 +199,7 @@ const currentOrders = sortedOrders.slice(indexOfFirstOrder, indexOfLastOrder);
         "total",
         sortConfig.direction === "asc" ? "desc" : "asc"
       )
-    } m/>
+    } />
                 <AiFillFilter className={styles.filter} size={12} /></th>
               <th>Status<FaSort className={styles.sort} size={12}   onClick={() =>
       handleSort(
