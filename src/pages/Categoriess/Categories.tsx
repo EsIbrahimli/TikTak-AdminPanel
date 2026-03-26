@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useCategoriesStore } from "../../common/store/useCategoriesStore";
 import type { CategoryPayload } from "../../services/categoriesApi";
-import styles from "./categories.module.css";
+import styles from "./Categories.module.css";
 import Layout from "../../common/components/Layout/Layout";
 import Button from "../../common/components/Button/Button";
 import Pagination from "../../common/components/Pagination/Pagination";
