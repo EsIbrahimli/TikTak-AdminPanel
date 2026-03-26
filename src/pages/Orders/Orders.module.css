@@ -44,8 +44,8 @@ white-space: nowrap;
 }
 
 .statBox span{
-font-size:22px;
-font-weight:600;
+font-size:20px;
+font-weight: 500;
 white-space: nowrap;
 }
 .icon {
@@ -75,6 +75,7 @@ white-space: nowrap;
     width: 100%;
 overflow-x:auto;
 }
+
 .table{
 width:100%;
 border-collapse:collapse;
