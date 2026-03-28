@@ -10,6 +10,8 @@ import CampaignFormModal from "./components/CampaignFormModal.tsx";
 import DeleteCampaignModal from "./components/DeleteCampaignModal.tsx";
 import { toast } from "react-toastify";
 
+const ITEMS_PER_PAGE = 5;
+
 export default function Campaigns() {
   const {
     campaigns,
@@ -19,21 +21,21 @@ export default function Campaigns() {
     removeCampaign,
     loading,
   } = useCampaignStore();
+  
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingCampaignId, setEditingCampaignId] = useState<number | null>(null);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
 
   const safeCampaigns = Array.isArray(campaigns) ? campaigns : [];
 
   const totalItems = safeCampaigns.length;
-  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
-  const safeCurrentPage = Math.min(currentPage, totalPages);
-  const startIndex = (safeCurrentPage - 1) * itemsPerPage;
+  const totalPages = Math.max(1, Math.ceil(totalItems / ITEMS_PER_PAGE));
+  const page = Math.min(currentPage, totalPages);
+  const startIndex = (page - 1) * ITEMS_PER_PAGE;
   const paginatedCampaigns = safeCampaigns.slice(
     startIndex,
-    startIndex + itemsPerPage,
+    startIndex + ITEMS_PER_PAGE,
   );
 
   const editingCampaign =
@@ -88,7 +90,12 @@ export default function Campaigns() {
     fetchCampaigns();
   }, [fetchCampaigns]);
 
-const Campaigns = () => {
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
   return (
     <Layout>
       <div className={styles.page}>
@@ -178,9 +185,9 @@ const Campaigns = () => {
 
         <div className={styles.paginationRow}>
           <Pagination
-            currentPage={safeCurrentPage}
+            currentPage={page}
             totalItems={totalItems}
-            itemsPerPage={itemsPerPage}
+            itemsPerPage={ITEMS_PER_PAGE}
             onPageChange={setCurrentPage}
           />
         </div>

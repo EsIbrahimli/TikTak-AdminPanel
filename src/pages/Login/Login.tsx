@@ -8,12 +8,15 @@ import { useAuthStore } from '../../common/store/useAuthStore'
 import { ROUTES } from '../../common/constant/router'
 import { toast } from 'react-toastify'
 
+const LOGIN_PHONE_KEY = 'login_phone'
+const LOGIN_PASSWORD_KEY = 'login_password'
+
 const Login = () => {
   const navigate = useNavigate()
   const { login, loading, token } = useAuthStore()
 
-  const [phone, setPhone] = useState('')
-  const [password, setPassword] = useState('')
+  const [phone, setPhone] = useState(() => localStorage.getItem(LOGIN_PHONE_KEY) ?? '')
+  const [password, setPassword] = useState(() => localStorage.getItem(LOGIN_PASSWORD_KEY) ?? '')
   const [error, setError] = useState(false)
 
   // Token varsa yönləndir
@@ -29,6 +32,11 @@ const Login = () => {
         return () => clearTimeout(timer)
       }
     }, [error])
+
+  useEffect(() => {
+    localStorage.setItem(LOGIN_PHONE_KEY, phone)
+    localStorage.setItem(LOGIN_PASSWORD_KEY, password)
+  }, [phone, password])
 
   const handleLoginClick = async () => {
     if (!phone || !password) {

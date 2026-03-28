@@ -15,7 +15,6 @@ margin-bottom:20px;
 }
 
 /* stats */
-
 .stats{
 display:flex;
 gap:20px;
@@ -96,14 +95,13 @@ white-space: nowrap;
 
 .table td{
 padding:12px;
-font-size:13px;
 border-bottom:1px solid #f2f2f2;
 white-space: nowrap;
-
+font-size: 12px;
+font-weight: 400;
 }
 
 /* status */
-
 .pending{
 background:#fff3cd;
 color:#856404;
@@ -113,11 +111,12 @@ font-size:12px;
 }
 
 .delivery{
-background:#d4edda;
+background:#d8f9e0;
 color:#155724;
 padding:4px 10px;
 border-radius:6px;
 font-size:12px;
+border: 1px solid #92daa3;
 }
 
 .waiting{
@@ -126,18 +125,20 @@ color:#383d99;
 padding:4px 10px;
 border-radius:6px;
 font-size:12px;
+border: 1px solid #c3c6f0;
 }
+
 .preparing {
   background: #fff3cd;
   color: #856404;
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 12px;
-  display: inline-block; /* 🔥 bunu əlavə et */
+  border: 1px solid #e0c87f;
+  display: inline-block;  /* 🔥 bunu əlavə et */
 }
 
 /* action */
-
 .action button {
   background: transparent;
   border: 1px solid transparent;
@@ -158,7 +159,6 @@ font-size:12px;
 }
 
 /* pagination */
-
 .pagination{
 margin-top:15px;
 display:flex;

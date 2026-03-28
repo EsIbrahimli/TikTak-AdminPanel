@@ -19,15 +19,27 @@ import { ROUTES } from "../../common/constant/router";
 import { toast } from "react-toastify";
 import Loading from "../../common/components/Loading/Loading";
 
+type SortKey = "orderNumber" | "createdAt" | "address" | "itemCount" | "total" | "status";
+
+type FilterState = Record<SortKey, string>;
+
 
 const Orders = () => {
   const navigate = useNavigate();
   const token = useAuthStore((state) => state.token);
-
   const [openModal, setOpenModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortConfig, setSortConfig] = useState<{ key: string | null; direction: "asc" | "desc" | null }>({ key: null, direction: null });
+  const [sortConfig, setSortConfig] = useState<{ key: SortKey | null; direction: "asc" | "desc" | null }>({ key: null, direction: null });
+  const [filters, setFilters] = useState<FilterState>({
+    orderNumber: "",
+    createdAt: "",
+    address: "",
+    itemCount: "",
+    total: "",
+    status: "",
+  });
+
   const ordersPerPage = 5;
 
   const { orders, totalSales, totalOrders, pending, preparing, delivered, canceled, getOrdersAndStats, loading, error } =
@@ -48,11 +60,104 @@ const Orders = () => {
     }
   }, [error]);
 
-  const indexOfLastOrder = currentPage * ordersPerPage;
-  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
-
   const safeOrders = Array.isArray(orders) ? orders : [];
 
+  const statusMap = {
+    PENDING: "Gözləyir",
+    PREPARING: "Hazırlanır",
+    DELIVERED: "Çatdırılıb",
+    CANCELED: "Ləğv edilib"
+  };
+
+  const getStatusLabel = (status: Order["status"]) => {
+    return statusMap[status as keyof typeof statusMap] ?? String(status ?? "");
+  };
+
+  const handleFilter = (key: SortKey, label: string) => {
+    const currentValue = filters[key];
+    const value = window.prompt(`${label} filteri daxil et:`, currentValue);
+
+    if (value === null) {
+      return;
+    }
+
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value.trim(),
+    }));
+    setCurrentPage(1);
+  };
+
+  const handleSort = (key: SortKey) => {
+    setSortConfig((prev) => {
+      const direction = prev.key === key && prev.direction === "asc" ? "desc" : "asc";
+      return { key, direction };
+    });
+  };
+
+  const filteredOrders = safeOrders.filter((order) => {
+    const orderNumberValue = String(order.orderNumber).toLowerCase();
+    const createdAtValue = new Date(order.createdAt).toLocaleDateString().toLowerCase();
+    const addressValue = String(order.address ?? "").toLowerCase();
+    const itemCountValue = String(order.items.reduce((sum, i) => sum + i.quantity, 0)).toLowerCase();
+    const totalValue = String(order.total).toLowerCase();
+    const statusValue = getStatusLabel(order.status).toLowerCase();
+
+    return (
+      orderNumberValue.includes(filters.orderNumber.toLowerCase()) &&
+      createdAtValue.includes(filters.createdAt.toLowerCase()) &&
+      addressValue.includes(filters.address.toLowerCase()) &&
+      itemCountValue.includes(filters.itemCount.toLowerCase()) &&
+      totalValue.includes(filters.total.toLowerCase()) &&
+      statusValue.includes(filters.status.toLowerCase())
+    );
+  });
+
+  const sortedOrders = [...filteredOrders].sort((a, b) => {
+    if (!sortConfig.key) return 0;
+
+    let aValue;
+    let bValue;
+
+    switch (sortConfig.key) {
+      case "orderNumber":
+        aValue = a.orderNumber;
+        bValue = b.orderNumber;
+        break;
+      case "createdAt":
+        aValue = new Date(a.createdAt);
+        bValue = new Date(b.createdAt);
+        break;
+      case "address":
+        aValue = a.address;
+        bValue = b.address;
+        break;
+      case "itemCount":
+        aValue = a.items.reduce((sum, i) => sum + i.quantity, 0);
+        bValue = b.items.reduce((sum, i) => sum + i.quantity, 0);
+        break;
+      case "total":
+        aValue = a.total;
+        bValue = b.total;
+        break;
+      case "status":
+        aValue = getStatusLabel(a.status);
+        bValue = getStatusLabel(b.status);
+        break;
+      default:
+        return 0;
+    }
+
+    if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
+    if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  const totalPages = Math.max(1, Math.ceil(sortedOrders.length / ordersPerPage));
+  const page = Math.min(currentPage, totalPages);
+  const indexOfLastOrder = page * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = sortedOrders.slice(indexOfFirstOrder, indexOfLastOrder);
 
   if (!token) return null;
 
@@ -64,66 +169,17 @@ const Orders = () => {
     );
   }
   if (error) return <p>Xəta: {error}</p>;
-  const statusMap = {
-  PENDING: "Gözləyir",
-  PREPARING: "Hazırlanır",
-  DELIVERED: "Çatdırılıb",
-  CANCELED: "Ləğv edilib"
-};
-const handleSort = (key: string, direction: "asc" | "desc") => {
-  setSortConfig({ key, direction });
-};
-const sortedOrders = [...safeOrders].sort((a, b) => {
-  if (!sortConfig.key) return 0;
-
-  let aValue;
-  let bValue;
-
-  switch (sortConfig.key) {
-    case "orderNumber":
-      aValue = a.orderNumber;
-      bValue = b.orderNumber;
-      break;
-    case "createdAt":
-      aValue = new Date(a.createdAt);
-      bValue = new Date(b.createdAt);
-      break;
-    case "address":
-      aValue = a.address;
-      bValue = b.address;
-      break;
-    case "itemCount":
-      aValue = a.items.reduce((sum, i) => sum + i.quantity, 0);
-      bValue = b.items.reduce((sum, i) => sum + i.quantity, 0);
-      break;
-    case "total":
-      aValue = a.total;
-      bValue = b.total;
-      break;
-    default:
-      return 0;
-  }
-
-  if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
-  if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
-  return 0;
-});
-const currentOrders = sortedOrders.slice(indexOfFirstOrder, indexOfLastOrder);
-// 1. sort edilmiş sifarişlər
 
 
   return (
     <Layout>
-
       <h2 className={styles.title}>Sifarişlər</h2>
-
       <div className={styles.stats}>
         <div className={styles.statBox}>
           <p>Ümumi sifarişlər</p>
           <BsCart3 className={styles.icon} size={15} />
           <span>{totalOrders}</span>
         </div>
-
         <div className={styles.statBox}>
           <p>Ümumi gəlir</p>
           <BsCurrencyDollar className={styles.money} size={15} />
@@ -159,55 +215,24 @@ const currentOrders = sortedOrders.slice(indexOfFirstOrder, indexOfLastOrder);
           <thead>
             <tr>
 
-              <th>No<FaSort className={styles.sort} size={12} 
-            
-              onClick={() =>
-      handleSort(
-        "orderNumber",
-        sortConfig.direction === "asc" ? "desc" : "asc"
-      )
-    }
-     style={{
-        color: sortConfig.key === "orderNumber" ? "blue" : "gray"
-   
-  }} />
-                <AiFillFilter className={styles.filter} size={12} /></th>
- 
-              <th>Tarix<FaSort className={styles.sort} size={12}   onClick={() =>
-      handleSort(
-        "createdAt",
-        sortConfig.direction === "asc" ? "desc" : "asc"
-      )
-    } />
-                <AiFillFilter className={styles.filter} size={12} /></th>
-              <th>Çatdırılma ünvanı<FaSort className={styles.sort} size={12}   onClick={() =>
-      handleSort(
-        "address",
-        sortConfig.direction === "asc" ? "desc" : "asc"
-      )
-    } />
-                <AiFillFilter className={styles.filter} size={12} /></th>
-              <th>Məhsul sayı<FaSort className={styles.sort} size={12}   onClick={() =>
-      handleSort(
-        "itemCount",
-        sortConfig.direction === "asc" ? "desc" : "asc"
-      )
-    } />
-                <AiFillFilter className={styles.filter} size={12} /></th>
-              <th>Subtotal<FaSort className={styles.sort} size={12}   onClick={() =>
-      handleSort(
-        "total",
-        sortConfig.direction === "asc" ? "desc" : "asc"
-      )
-    } />
-                <AiFillFilter className={styles.filter} size={12} /></th>
-              <th>Status<FaSort className={styles.sort} size={12}   onClick={() =>
-      handleSort(
-        "status",
-        sortConfig.direction === "asc" ? "desc" : "asc"
-      )
-    } />
-                <AiFillFilter className={styles.filter} size={12} /></th>
+              <th>No<FaSort className={styles.sort} size={12}
+                onClick={() => handleSort("orderNumber")}
+                style={{
+                  color: sortConfig.key === "orderNumber" ? "blue" : "gray"
+
+                }} />
+                <AiFillFilter className={styles.filter} size={12} onClick={() => handleFilter("orderNumber", "No")} style={{ color: filters.orderNumber ? "#2563eb" : undefined }} /></th>
+
+              <th>Tarix<FaSort className={styles.sort} size={12} onClick={() => handleSort("createdAt")} />
+                <AiFillFilter className={styles.filter} size={12} onClick={() => handleFilter("createdAt", "Tarix")} style={{ color: filters.createdAt ? "#2563eb" : undefined }} /></th>
+              <th>Çatdırılma ünvanı<FaSort className={styles.sort} size={12} onClick={() => handleSort("address")} />
+                <AiFillFilter className={styles.filter} size={12} onClick={() => handleFilter("address", "Çatdırılma ünvanı")} style={{ color: filters.address ? "#2563eb" : undefined }} /></th>
+              <th>Məhsul sayı<FaSort className={styles.sort} size={12} onClick={() => handleSort("itemCount")} />
+                <AiFillFilter className={styles.filter} size={12} onClick={() => handleFilter("itemCount", "Məhsul sayı")} style={{ color: filters.itemCount ? "#2563eb" : undefined }} /></th>
+              <th>Subtotal<FaSort className={styles.sort} size={12} onClick={() => handleSort("total")} />
+                <AiFillFilter className={styles.filter} size={12} onClick={() => handleFilter("total", "Subtotal")} style={{ color: filters.total ? "#2563eb" : undefined }} /></th>
+              <th>Status<FaSort className={styles.sort} size={12} onClick={() => handleSort("status")} />
+                <AiFillFilter className={styles.filter} size={12} onClick={() => handleFilter("status", "Status")} style={{ color: filters.status ? "#2563eb" : undefined }} /></th>
               <th>Əməliyyat</th>
             </tr>
           </thead>
@@ -228,34 +253,32 @@ const currentOrders = sortedOrders.slice(indexOfFirstOrder, indexOfLastOrder);
                       : order.status === "DELIVERED"
                         ? styles.delivery
                         : styles.canceled
-                }>{statusMap[order.status]}</span></td>
+                }>{getStatusLabel(order.status)}</span></td>
 
-    <td className={styles.action}>
-  <button onClick={() => {
-    setSelectedOrder(order); // hansı order seçildiyini saxlayır
-    setOpenModal(true);      // modal açır
-  }}><PiEyeLight size={13} />
-    Göstər
-  </button>
-</td>
+                <td className={styles.action}>
+                  <button onClick={() => {
+                    setSelectedOrder(order); // hansı order seçildiyini saxlayır
+                    setOpenModal(true);      // modal açır
+                  }}><PiEyeLight size={13} />
+                    Göstər
+                  </button>
+                </td>
               </tr>))}
           </tbody>
         </table>
       </div>
 
       <Pagination
-        currentPage={currentPage}
-        totalItems={safeOrders.length}
+        currentPage={page}
+        totalItems={sortedOrders.length}
         itemsPerPage={ordersPerPage}
         onPageChange={setCurrentPage} />
 
-
-     <OrderModal
-  isOpen={openModal}
-  onClose={() => setOpenModal(false)}
-  order={selectedOrder}
-/>
-
+      <OrderModal
+        isOpen={openModal}
+        onClose={() => setOpenModal(false)}
+        order={selectedOrder}
+      />
     </Layout>
   )
 };
