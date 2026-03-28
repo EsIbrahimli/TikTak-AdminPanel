@@ -1,0 +1,50 @@
+import styles from "./DeleteCampaignModal.module.css";
+import deleteIcon from "../../../assets/icons/deleteIcon.svg";
+
+interface Props {
+  isOpen: boolean;
+  campaignTitle?: string;
+  isSubmitting?: boolean;
+  onCancel: () => void;
+  onConfirm: () => Promise<void> | void;
+}
+
+export default function DeleteCampaignModal({
+  isOpen,
+  campaignTitle,
+  isSubmitting = false,
+  onCancel,
+  onConfirm,
+}: Props) {
+  if (!isOpen) {
+    return null;
+  }
+
+  return (
+    <div className={styles.overlay} onClick={onCancel}>
+      <div className={styles.modal} onClick={(event) => event.stopPropagation()}>
+        <h3 className={styles.title}>Kampaniya silinsin?</h3>
+        <img className={styles.icon} src={deleteIcon} alt="Delete icon" />
+        <p className={styles.text}>
+          {campaignTitle
+            ? `"${campaignTitle}" kampaniyası silinəcək.`
+            : "Bu kampaniya silinəcək."}
+        </p>
+
+        <div className={styles.actions}>
+          <button type="button" className={styles.cancel} onClick={onCancel}>
+            Ləğv et
+          </button>
+          <button
+            type="button"
+            className={styles.delete}
+            onClick={onConfirm}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Silinir..." : "Sil"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

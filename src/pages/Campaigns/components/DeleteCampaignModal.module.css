@@ -1,0 +1,70 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+  padding: 16px;
+}
+
+.modal {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.25);
+  padding: 22px;
+}
+
+.title {
+  margin: 0 0 8px;
+  font-size: 20px;
+  color: #111827;
+}
+
+.icon {
+  width: 200px;
+  height: 200px;
+  display: block;
+  margin: 0 auto 12px;
+}
+
+.text {
+  margin: 0;
+  color: #4b5563;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.actions {
+  margin-top: 18px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.cancel,
+.delete {
+  border: none;
+  border-radius: 8px;
+  padding: 9px 14px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.cancel {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.delete {
+  background: #ef4444;
+  color: #ffffff;
+}
+
+.delete:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
