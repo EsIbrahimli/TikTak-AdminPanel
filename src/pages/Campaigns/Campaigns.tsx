@@ -88,6 +88,7 @@ export default function Campaigns() {
     fetchCampaigns();
   }, [fetchCampaigns]);
 
+const Campaigns = () => {
   return (
     <Layout>
       <div className={styles.page}>

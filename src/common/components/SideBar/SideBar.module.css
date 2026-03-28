@@ -28,16 +28,20 @@
     margin-bottom: 20px;
 }
 
+.navLink:hover{
+    color: #5fc232;
+}
 
-.orders,
-.users,
-.products,
-.categories,
-.campaigns,
-.login{
+.navLink{
     margin-bottom:100px;
     font-size: 14px;
     font-weight: 300;
     color:#2B3043;
     text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.active{
+    color: #5fc232;
+    font-weight: 500;
 }

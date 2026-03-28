@@ -4,7 +4,14 @@ import { fetchOrders, fetchOrdersStats } from "../../services/ordersApi";
 import { useAuthStore } from "./useAuthStore";
 
 export interface OrderItem {
+  id?: number | string;
   quantity: number;
+  name?: string;
+  image?: string;
+  category?: string;
+  weight?: string;
+  price?: number;
+  pricePerKg?: number;
 }
 
 export interface Order {
@@ -12,6 +19,9 @@ export interface Order {
   orderNumber: string;
   createdAt: string;
   address: string;
+  phone?: string;
+  paymentMethod?: string;
+  deliveryPrice?: number;
   items: OrderItem[];
   total: number;
   status: "PENDING" | "PREPARING" | "DELIVERED" | "CANCELED";
@@ -91,9 +101,9 @@ export const useOrderStore = create<OrderState>((set) => ({
             ? ordersRaw.orders
             : [];
 
-      const statsData =
+      const statsData: Partial<OrderStats> =
         "data" in (statsRaw as StatsApiResponse) && (statsRaw as StatsApiResponse).data
-          ? (statsRaw as StatsApiResponse).data
+          ? (statsRaw as StatsApiResponse).data!
           : (statsRaw as StatsApiResponse);
 
       set({

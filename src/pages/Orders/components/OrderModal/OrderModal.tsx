@@ -1,6 +1,13 @@
+import { type Order } from "../../../../common/store/useOrderStore";
 import styles from "./OrderModal.module.css";
 
-const OrderModal = ({ isOpen, onClose, order }) => {
+interface OrderModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  order: Order | null;
+}
+
+const OrderModal = ({ isOpen, onClose, order }: OrderModalProps) => {
   if (!isOpen || !order) return null;
 
   return (

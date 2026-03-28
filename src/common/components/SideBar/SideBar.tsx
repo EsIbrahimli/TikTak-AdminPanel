@@ -1,18 +1,21 @@
-import { Link } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import { ROUTES } from '../../constant/router'
 import styles from './SideBar.module.css'
 
 const SideBar = () => {
+    const getNavLinkClassName = ({ isActive }: { isActive: boolean }) =>
+        isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
+
     return (
         <aside className={styles.sidebar}>
             <nav className={styles.nav}>
                 <ul>
-                    <li><Link to={ROUTES.ORDERS} className={styles.orders}>Sifarişlər</Link></li>
-                    <li><Link to={ROUTES.CAMPAIGNS} className={styles.campaigns}>Kampaniyalar</Link></li>
-                    <li><Link to={ROUTES.CATEGORIES} className={styles.categories}>Kateqoriyalar</Link></li>
-                    <li><Link to={ROUTES.PRODUCTS} className={styles.products}>Məhsullar</Link></li>
-                    <li><Link to={ROUTES.USERS} className={styles.users}>İstifadəçilər</Link></li>
-                    <li><Link to={ROUTES.LOGOUT} className={styles.login}>Çıxış</Link></li>
+                    <li><NavLink to={ROUTES.ORDERS} className={getNavLinkClassName}>Sifarişlər</NavLink></li>
+                    <li><NavLink to={ROUTES.CAMPAIGNS} className={getNavLinkClassName}>Kampaniyalar</NavLink></li>
+                    <li><NavLink to={ROUTES.CATEGORIES} className={getNavLinkClassName}>Kateqoriyalar</NavLink></li>
+                    <li><NavLink to={ROUTES.PRODUCTS} className={getNavLinkClassName}>Məhsullar</NavLink></li>
+                    <li><NavLink to={ROUTES.USERS} className={getNavLinkClassName}>İstifadəçilər</NavLink></li>
+                    <li><NavLink to={ROUTES.LOGOUT} className={getNavLinkClassName}>Çıxış</NavLink></li>
 
                 </ul>
             </nav>
