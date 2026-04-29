@@ -45,7 +45,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: () => {
     localStorage.removeItem("token")
-    set({ token: null });
+    set({ token: null, savedPassword: '' });
   }
 }))
 
