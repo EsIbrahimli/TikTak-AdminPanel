@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react'
 import Loading from '../../common/components/Loading/Loading'
 import { useUserStore } from '../../common/store/useUserStore'
 import { toast } from 'react-toastify'
+import { PiEyeLight } from 'react-icons/pi'
 
 interface UserItem {
   id: number;
@@ -44,10 +45,13 @@ useEffect(() => {
 
   return (
     <Layout>
-       
+      <div className={styles.page}>
+        <div className={styles.header}>
+          <h2 className={styles.title}>İstifadəçilər</h2>
+        </div>
 
-<h2 className={styles.title}>İstifadəçilər</h2>
-
+        <div className={styles.content}>
+<div className={styles.tableWrapper}>
 <table className={styles.table}>
 
 <thead>
@@ -109,7 +113,10 @@ useEffect(() => {
 <button className={styles.actionBtn} onClick={() => {
   setSelectedUser(user);
   setIsModalOpen(true);
-}}>Göstər</button>
+}}>
+  <PiEyeLight size={14} />
+  Göstər
+</button>
 </td>
 
 </tr>
@@ -117,11 +124,17 @@ useEffect(() => {
 </tbody>
 
 </table>
+</div>
+        </div>
+
+        <div className={styles.paginationRow}>
 <Pagination 
 currentPage={currentPage}
   totalItems={safeUsers.length}
   itemsPerPage={itemsPerPage}
   onPageChange={setCurrentPage}/>
+        </div>
+      </div>
 <UsersModal
   isOpen={isModalOpen}
   onClose={() => {

@@ -268,11 +268,13 @@ const Orders = () => {
         </table>
       </div>
 
-      <Pagination
-        currentPage={page}
-        totalItems={sortedOrders.length}
-        itemsPerPage={ordersPerPage}
-        onPageChange={setCurrentPage} />
+      <div className={styles.paginationRow}>
+        <Pagination
+          currentPage={page}
+          totalItems={sortedOrders.length}
+          itemsPerPage={ordersPerPage}
+          onPageChange={setCurrentPage} />
+      </div>
 
       <OrderModal
         isOpen={openModal}

@@ -10,6 +10,25 @@
     padding: 0 20px;
 }
 
+.menuBtn {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #2B3043;
+    padding: 6px;
+    border-radius: 6px;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-right: 8px;
+    transition: background 0.2s;
+}
+
+.menuBtn:hover {
+    background: #F6F5FB;
+}
+
 .logo {
     font-size: 28px;
      font-weight: 800;
@@ -28,4 +47,40 @@
 
 .input::placeholder {
     color:#000000;
+}
+
+/* ── Tablet / small laptop ── < 1024px */
+@media (max-width: 1023px) {
+    .header {
+        width: 100%;
+        padding: 0 24px;
+    }
+
+    .menuBtn {
+        display: flex;
+    }
+
+    .logo {
+        font-size: 22px;
+    }
+
+    .input {
+        width: 200px;
+        margin-left: auto;
+    }
+}
+
+/* ── Mobile ── < 768px */
+@media (max-width: 767px) {
+    .header {
+        padding: 0 16px;
+    }
+
+    .logo {
+        font-size: 18px;
+    }
+
+    .input {
+        display: none;
+    }
 }

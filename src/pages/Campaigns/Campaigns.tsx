@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { useCampaignStore } from "../../common/store/useCampaignStore";
 import type { CampaignPayload } from "../../services/campaignsApi";
 import styles from "./Campaigns.module.css";
@@ -161,20 +162,25 @@ export default function Campaigns() {
                       )}
                     </td>
 
-                    <td className={styles.buttons}>
-                      <button
-                        className={styles.edit}
-                        onClick={() => setEditingCampaignId(campaign.id)}
-                      >
-                        Düzəlt
-                      </button>
-
-                      <button
-                        className={styles.delete}
-                        onClick={() => setDeleteId(campaign.id)}
-                      >
-                        Sil
-                      </button>
+                    <td>
+                      <div className={styles.buttons}>
+                        <button
+                          className={styles.edit}
+                          onClick={() => setEditingCampaignId(campaign.id)}
+                          title="Düzəlt"
+                        >
+                          <FiEdit2 size={13} />
+                          Düzəlt
+                        </button>
+                        <button
+                          className={styles.delete}
+                          onClick={() => setDeleteId(campaign.id)}
+                          title="Sil"
+                        >
+                          <FiTrash2 size={13} />
+                          Sil
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))

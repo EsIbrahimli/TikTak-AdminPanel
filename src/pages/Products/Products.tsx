@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { useProductsStore } from "../../common/store/useProductStore";
 import { useCategoriesStore } from "../../common/store/useCategoriesStore";
 import type { Product, ProductPayload } from "../../services/productsApi";
@@ -146,19 +147,25 @@ export default function Products() {
                       <span className={styles.badge}>{product.type || "—"}</span>
                     </td>
                     <td>{new Date(product.created_at).toLocaleDateString("az-AZ")}</td>
-                    <td className={styles.buttons}>
-                      <button
-                        className={styles.edit}
-                        onClick={() => setEditingId(product.id)}
-                      >
-                        Düzəlt
-                      </button>
-                      <button
-                        className={styles.delete}
-                        onClick={() => setDeleteId(product.id)}
-                      >
-                        Sil
-                      </button>
+                    <td>
+                      <div className={styles.buttons}>
+                        <button
+                          className={styles.edit}
+                          onClick={() => setEditingId(product.id)}
+                          title="Düzəlt"
+                        >
+                          <FiEdit2 size={13} />
+                          Düzəlt
+                        </button>
+                        <button
+                          className={styles.delete}
+                          onClick={() => setDeleteId(product.id)}
+                          title="Sil"
+                        >
+                          <FiTrash2 size={13} />
+                          Sil
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))

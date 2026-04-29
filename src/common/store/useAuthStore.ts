@@ -3,6 +3,8 @@ import { AuthApi } from "../../services/authApi"
 
 interface AuthState {
   token: string | null
+  savedPhone: string
+  savedPassword: string
   loading: boolean
   login: (phone: string, password: string) => Promise<void>
   logout: () => void
@@ -10,6 +12,8 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>((set) => ({
   token: localStorage.getItem("token"),
+  savedPhone: localStorage.getItem("savedPhone") ?? '+994559916601',
+  savedPassword: '1234',
   loading: false,
 
   login: async (phone, password) => {
@@ -27,8 +31,12 @@ export const useAuthStore = create<AuthState>((set) => ({
 
       localStorage.setItem("token", token)
 
+      localStorage.setItem("savedPhone", phone)
+
       set({
-        token
+        token,
+        savedPhone: phone,
+        savedPassword: password,
       })
     } finally {
       set({ loading: false })
@@ -37,7 +45,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: () => {
     localStorage.removeItem("token")
-    set({ token: null })
+    set({ token: null });
   }
 }))
 

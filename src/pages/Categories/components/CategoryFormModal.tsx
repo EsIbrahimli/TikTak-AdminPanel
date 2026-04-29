@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Button from "../../../common/components/Button/Button";
 import styles from "./CategoryFormModal.module.css";
 
 interface CategoryFormValues {
@@ -104,9 +105,9 @@ export default function CategoryFormModal({
             <button type="button" className={styles.cancel} onClick={onClose}>
               Ləğv et
             </button>
-            <button type="submit" className={styles.submit} disabled={isSubmitting}>
+            <Button type="submit" className={styles.submit} disabled={isSubmitting}>
               {isSubmitting ? "Yüklənir..." : submitLabel}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

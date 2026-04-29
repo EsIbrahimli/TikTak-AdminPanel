@@ -62,6 +62,7 @@ interface OrderState {
   loading: boolean;
   error: string | null;
   getOrdersAndStats: () => Promise<void>;
+  updateOrderStatusLocal: (id: number, status: Order["status"]) => void;
 }
 
 const asRecord = (value: unknown): Record<string, unknown> | null => {
@@ -199,6 +200,12 @@ export const useOrderStore = create<OrderState>((set) => ({
   canceled: 0,
   loading: false,
   error: null,
+
+  updateOrderStatusLocal: (id, status) => {
+    set((state) => ({
+      orders: state.orders.map((o) => (o.id === id ? { ...o, status } : o)),
+    }));
+  },
 
   getOrdersAndStats: async () => {
     const token = useAuthStore.getState().token ?? localStorage.getItem("token");

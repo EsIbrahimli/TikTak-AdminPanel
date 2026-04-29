@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { PiEyeLight, PiEyeSlashLight } from 'react-icons/pi'
 import styles from './Login.module.css'
 import loginSvg from '../../assets/images/login.svg'
 import Button from '../../common/components/Button/Button'
@@ -8,16 +9,14 @@ import { useAuthStore } from '../../common/store/useAuthStore'
 import { ROUTES } from '../../common/constant/router'
 import { toast } from 'react-toastify'
 
-const LOGIN_PHONE_KEY = 'login_phone'
-const LOGIN_PASSWORD_KEY = 'login_password'
-
 const Login = () => {
   const navigate = useNavigate()
-  const { login, loading, token } = useAuthStore()
+  const { login, loading, token, savedPhone, savedPassword } = useAuthStore()
 
-  const [phone, setPhone] = useState(() => localStorage.getItem(LOGIN_PHONE_KEY) ?? '')
-  const [password, setPassword] = useState(() => localStorage.getItem(LOGIN_PASSWORD_KEY) ?? '')
+  const [phone, setPhone] = useState(() => savedPhone)
+  const [password, setPassword] = useState('')
   const [error, setError] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   // Token varsa yönləndir
   useEffect(() => {
@@ -26,19 +25,22 @@ const Login = () => {
     }
   }, [token, navigate])
 
-    useEffect(() => {
-      if (error) {
-        const timer = setTimeout(() => setError(false), 3000)
-        return () => clearTimeout(timer)
-      }
-    }, [error])
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(false), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [error])
 
   useEffect(() => {
-    localStorage.setItem(LOGIN_PHONE_KEY, phone)
-    localStorage.setItem(LOGIN_PASSWORD_KEY, password)
-  }, [phone, password])
+    if (password && savedPassword && password === savedPassword && phone && !loading) {
+      void handleLoginClick()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [password])
 
   const handleLoginClick = async () => {
+    if (loading) return
     if (!phone || !password) {
       setError(true)
       toast.error('Telefon və parol daxil edin.')
@@ -48,8 +50,8 @@ const Login = () => {
     try {
       await login(phone, password);
       toast.success('Giriş uğurla tamamlandı.');
-       navigate(ROUTES.ORDERS);
-  
+      navigate(ROUTES.ORDERS);
+
     } catch (err: unknown) {
       console.error(err)
       setError(true)
@@ -63,16 +65,23 @@ const Login = () => {
     <div className={styles.login}>
       <div className={styles.container}>
         <img className={styles.image} src={loginSvg} alt="Login" />
-        <h1 className={styles.title}>TIK TAK ADMIN</h1>
+        <h1 className={styles.title}>TIK TAK ADMiN</h1>
       </div>
 
       <div className={styles.divider} />
 
-      <div className={styles.form}>
-      <h1 className={styles.formTitle}>Admin Panel</h1>
+      <form
+        className={styles.form}
+        onSubmit={(e) => { e.preventDefault(); void handleLoginClick() }}
+        autoComplete="on"
+      >
+        <h1 className={styles.formTitle}>Admin Panel</h1>
         <div className={styles.inputContainer}>
-          <label>Telefon</label>
+          <label htmlFor="phone">Telefon</label>
           <input
+            id="phone"
+            name="phone"
+            autoComplete="phone"
             className={`${styles.input} ${error ? styles.error : ''}`}
             type="tel"
             inputMode="tel"
@@ -83,24 +92,38 @@ const Login = () => {
         </div>
 
         <div className={styles.inputContainer}>
-          <label>Parol</label>
-          <input
-            className={`${styles.input} ${error ? styles.error : ''}`}
-            type="password"
-            placeholder="Parol"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <label htmlFor="password">Parol</label>
+          <div className={styles.passwordWrapper}>
+            <input
+              id="password"
+              name="password"
+              autoComplete="current-password"
+              className={`${styles.input} ${error ? styles.error : ''}`}
+              type={showPassword ? 'text' : 'password'}
+              placeholder="********"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              className={styles.eyeBtn}
+              onClick={() => setShowPassword(v => !v)}
+              tabIndex={-1}
+              aria-label={showPassword ? 'Parolu gizlə' : 'Parolu göstər'}
+            >
+              {showPassword ? <PiEyeSlashLight size={18} /> : <PiEyeLight size={18} />}
+            </button>
+          </div>
         </div>
 
         <Button
+          type="submit"
           size="medium"
-          onClick={handleLoginClick}
           disabled={loading}
         >
           Daxil ol
         </Button>
-      </div>
+      </form>
     </div>
   )
 }

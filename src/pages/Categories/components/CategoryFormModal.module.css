@@ -1,90 +1,180 @@
+/* ── Backdrop ─────────────────────────────────────────── */
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.5);
+  background: rgba(43, 48, 67, 0.45);
+  backdrop-filter: blur(3px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1100;
-  padding: 16px;
+  padding: 20px;
 }
 
+/* ── Modal card ───────────────────────────────────────── */
 .modal {
   width: 100%;
-  max-width: 480px;
-  border-radius: 14px;
+  max-width: 500px;
   background: #ffffff;
-  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.24);
-  padding: 22px;
+  border-radius: 16px;
+  box-shadow:
+    0 4px 6px rgba(43, 48, 67, 0.06),
+    0 20px 50px rgba(43, 48, 67, 0.18);
+  overflow: hidden;
 }
 
+/* ── Modal header ─────────────────────────────────────── */
 .title {
-  margin: 0 0 14px;
-  font-size: 20px;
-  color: #111827;
+  margin: 0;
+  padding: 20px 24px 18px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #2b3043;
+  border-bottom: 1px solid #f0f1f5;
+  letter-spacing: 0.01em;
 }
 
+/* ── Form body ────────────────────────────────────────── */
 .form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+  padding: 22px 24px 24px;
 }
 
+/* ── Field label ──────────────────────────────────────── */
 .label {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  font-size: 13px;
-  color: #374151;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #2b3043;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
+/* ── Inputs & textarea ────────────────────────────────── */
 .input,
 .textarea {
   width: 100%;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  padding: 10px;
+  background: #f6f5fb;
+  border: 1.5px solid #e8e9ef;
+  border-radius: 10px;
+  padding: 10px 14px;
   font-size: 14px;
+  font-weight: 400;
+  color: #2b3043;
   outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  box-sizing: border-box;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: #a0a8b8;
+}
+
+.input:hover,
+.textarea:hover {
+  border-color: #c5c8d6;
+  background: #f2f1f9;
 }
 
 .input:focus,
 .textarea:focus {
-  border-color: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+  background: #ffffff;
+  border-color: #5fc232;
+  box-shadow: 0 0 0 3.5px rgba(95, 194, 50, 0.14);
 }
 
 .textarea {
   resize: vertical;
+  min-height: 88px;
+  line-height: 1.5;
 }
 
+/* ── Action row ───────────────────────────────────────── */
 .actions {
-  margin-top: 8px;
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+  margin-top: 4px;
+  padding-top: 18px;
+  border-top: 1px solid #f0f1f5;
 }
 
+/* ── Buttons ──────────────────────────────────────────── */
 .cancel,
 .submit {
   border: none;
-  border-radius: 8px;
-  padding: 9px 14px;
-  cursor: pointer;
+  border-radius: 10px;
+  padding: 10px 22px;
   font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.1s ease;
+  letter-spacing: 0.02em;
 }
 
 .cancel {
-  background: #e5e7eb;
-  color: #111827;
+  background: transparent;
+  border: 1.5px solid #e0e2ea;
+  color: #2b3043;
+}
+
+.cancel:hover {
+  background: #f6f5fb;
+  border-color: #cfd2de;
 }
 
 .submit {
-  background:#5fc232;
+  background: #92D871;
   color: #ffffff;
+  box-shadow: 0 2px 8px rgba(146, 216, 113, 0.32);
+  transition: background 0.35s ease-out, transform 0.35s ease-out, box-shadow 0.35s ease-out;
+}
+
+.submit:hover:not(:disabled) {
+  background: #aadf84;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(146, 216, 113, 0.38);
+}
+
+.submit:active:not(:disabled) {
+  transform: translateY(0);
+  transition: transform 0.12s ease-out;
 }
 
 .submit:disabled {
-  opacity: 0.7;
+  opacity: 0.6;
   cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 540px) {
+  .modal {
+    border-radius: 14px;
+  }
+
+  .form {
+    padding: 18px 16px 20px;
+  }
+
+  .title {
+    padding: 16px 16px 14px;
+    font-size: 16px;
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  .cancel,
+  .submit {
+    width: 100%;
+    text-align: center;
+    padding: 11px;
+  }
 }

@@ -9,7 +9,28 @@
     justify-content: space-between;
     padding: 30px 30px 30px 30px;
     margin-left: 20px;
+    position: relative;
+    transition: transform 0.3s ease;
+}
 
+.closeBtn {
+    display: none;
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #2B3043;
+    padding: 4px;
+    border-radius: 6px;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.closeBtn:hover {
+    background: #F6F5FB;
 }
 
 .nav{
@@ -44,4 +65,28 @@
 .active{
     color: #5fc232;
     font-weight: 500;
+}
+
+/* ── Mobile / Tablet ── < 1024px: sidebar becomes a slide-in drawer */
+@media (max-width: 1023px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 999;
+        margin-left: 0;
+        border-radius: 0 14px 14px 0;
+        transform: translateX(-100%);
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
+        padding-top: 56px;
+    }
+
+    .open {
+        transform: translateX(0);
+    }
+
+    .closeBtn {
+        display: flex;
+    }
 }

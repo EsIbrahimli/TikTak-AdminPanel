@@ -1,4 +1,7 @@
+import { useState, useEffect } from "react";
 import { type Order } from "../../../../common/store/useOrderStore";
+import { useOrderStore } from "../../../../common/store/useOrderStore";
+import { updateOrderStatus } from "../../../../services/ordersApi";
 import styles from "./OrderModal.module.css";
 
 interface OrderModalProps {
@@ -8,9 +11,27 @@ interface OrderModalProps {
 }
 
 const OrderModal = ({ isOpen, onClose, order }: OrderModalProps) => {
+  const updateOrderStatusLocal = useOrderStore((s) => s.updateOrderStatusLocal);
+  const [status, setStatus] = useState(order?.status ?? "PENDING");
+
+  useEffect(() => {
+    if (order) setStatus(order.status);
+  }, [order]);
+
   if (!isOpen || !order) return null;
 
   const totalQuantity = order.items.reduce((sum, item) => sum + item.quantity, 0);
+
+  const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newStatus = e.target.value as Order["status"];
+    setStatus(newStatus);
+    try {
+      await updateOrderStatus(order.id, newStatus);
+      updateOrderStatusLocal(order.id, newStatus);
+    } catch {
+      setStatus(order.status);
+    }
+  };
 
   return (
     <div className={styles.overlay}>
@@ -25,7 +46,7 @@ const OrderModal = ({ isOpen, onClose, order }: OrderModalProps) => {
           <div className={styles.right}>
             <div>
               <span>Status</span>
-              <select className={styles.select} value={order.status}>
+              <select className={styles.select} value={status} onChange={handleStatusChange}>
                 <option value="PENDING">Gözləyir</option>
                 <option value="PREPARING">Hazırlanır</option>
                 <option value="DELIVERED">Çatdırılan</option>

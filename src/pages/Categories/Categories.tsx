@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { useCategoriesStore } from "../../common/store/useCategoriesStore";
 import type { CategoryPayload } from "../../services/categoriesApi";
 import styles from "./Categories.module.css";
@@ -152,20 +153,25 @@ export default function Categories() {
                       {new Date(cat.created_at).toLocaleDateString("az-AZ")}
                     </td>
 
-                    <td className={styles.buttons}>
-                      <button
-                        className={styles.edit}
-                        onClick={() => setEditingCategoryId(cat.id)}
-                      >
-                        Düzəlt
-                      </button>
-
-                      <button
-                        className={styles.delete}
-                        onClick={() => setDeleteId(cat.id)}
-                      >
-                        Sil
-                      </button>
+                    <td>
+                      <div className={styles.buttons}>
+                        <button
+                          className={styles.edit}
+                          onClick={() => setEditingCategoryId(cat.id)}
+                          title="Düzəlt"
+                        >
+                          <FiEdit2 size={13} />
+                          Düzəlt
+                        </button>
+                        <button
+                          className={styles.delete}
+                          onClick={() => setDeleteId(cat.id)}
+                          title="Sil"
+                        >
+                          <FiTrash2 size={13} />
+                          Sil
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))

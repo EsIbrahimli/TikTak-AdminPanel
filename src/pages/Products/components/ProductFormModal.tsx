@@ -1,4 +1,5 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
+import Button from "../../../common/components/Button/Button";
 import styles from "./ProductFormModal.module.css";
 
 interface CategoryOption {
@@ -226,9 +227,9 @@ export default function ProductFormModal({
             <button type="button" className={styles.cancel} onClick={onClose}>
               Ləğv et
             </button>
-            <button type="submit" className={styles.submit} disabled={isSubmitting}>
+            <Button type="submit" className={styles.submit} disabled={isSubmitting}>
               {isSubmitting ? "Yüklənir..." : submitLabel}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

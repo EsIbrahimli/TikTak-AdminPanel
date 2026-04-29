@@ -63,6 +63,17 @@
   flex-direction: column;
 }
 
+.select option {
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+.select:focus {
+  outline: none;
+  border-color: #45c11c;
+  box-shadow: 0 0 0 2px rgba(69,193,28,0.2);
+}
+
 .price {
   color: #e53935;
   font-weight: 700;

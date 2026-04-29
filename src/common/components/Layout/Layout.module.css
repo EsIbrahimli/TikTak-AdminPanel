@@ -9,10 +9,10 @@
 
 .main {
     width: 70%;
-    height: 600px;
+    min-height: 600px;
     background-color: #ffff;
     border-radius: 10px;
-    padding: 30px 30px 30px 30px;
+    padding: 30px;
     font-size: 28px;
     font-weight: 600;
     color: #2B3043;
@@ -23,4 +23,47 @@
 .headerContainer {
     width:100%;
     background-color: #ffff;
+}
+
+/* Overlay – shown on mobile when sidebar is open */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.42);
+    z-index: 998;
+}
+
+/* ── Tablet / small laptop ── < 1024px */
+@media (max-width: 1023px) {
+    .mainContainer {
+        width: 96%;
+        margin-top: 72px;
+        gap: 16px;
+    }
+
+    .main {
+        height: auto;
+        min-height: 560px;
+        margin-right: 0;
+        padding: 24px;
+    }
+}
+
+/* ── Mobile ── < 768px */
+@media (max-width: 767px) {
+    .mainContainer {
+        width: 100%;
+        margin-top: 64px;
+        padding: 0 12px 16px;
+        gap: 0;
+        box-sizing: border-box;
+    }
+
+    .main {
+        border-radius: 8px;
+        padding: 16px;
+        min-height: unset;
+        height: auto;
+        margin-right: 0;
+    }
 }

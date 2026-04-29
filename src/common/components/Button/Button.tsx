@@ -4,20 +4,28 @@ import styles from './Button.module.css';
 export interface ButtonProps {
     children: ReactNode;
     size?: 'small' | 'medium' | 'large';
+    type?: 'button' | 'submit' | 'reset';
+    className?: string;
     onClick?: () => void;
     disabled?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
     children,
-    size = 'medium',
+    size,
+    type = 'button',
+    className,
     onClick,
     disabled = false,
 }) => {
-    const classes = `${styles.btn} ${styles[`btn-${size}`]}`.trim();
+    const classes = [
+        styles.btn,
+        size ? styles[`btn-${size}`] : '',
+        className ?? '',
+    ].filter(Boolean).join(' ');
 
     return (
-        <button className={classes} onClick={onClick} disabled={disabled}>
+        <button type={type} className={classes} onClick={onClick} disabled={disabled}>
             {children}
         </button>
     );
